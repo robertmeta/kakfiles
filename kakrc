@@ -21,27 +21,30 @@ hook global WinCreate ^[^*]+$ %{
     add-highlighter global/ dynregex '%reg{/}' 0:+u
 
     # for mark.kak
-    set-face global markface1 rgb:000000,rgb:FFA07A
-    set-face global markface2 rgb:000000,rgb:D3D3D3
-    set-face global markface3 rgb:000000,rgb:B0E0E6
-    set-face global markface4 rgb:000000,rgb:7CFC00
-    set-face global markface5 rgb:000000,rgb:FFD700
-    set-face global markface6 rgb:000000,rgb:D8BFD8
+    set-face global MarkFace1 rgb:000000,rgb:FFA07A
+    set-face global MarkFace2 rgb:000000,rgb:D3D3D3
+    set-face global MarkFace3 rgb:000000,rgb:B0E0E6
+    set-face global MarkFace4 rgb:000000,rgb:7CFC00
+    set-face global MarkFace5 rgb:000000,rgb:FFD700
+    set-face global MarkFace6 rgb:000000,rgb:D8BFD8
 }
 hook global WinSetOption filetype=go %{
     set window indentwidth 0 # 0 means real tab
     set window formatcmd 'goimports'
     set window lintcmd 'gometalinter .'
     set window makecmd 'go build .'
-    map window goto d <esc>:go-jump<ret> -docstring "Jump to definition"
-    map window user k <esc>:go-doc-info<ret> -docstring "Show documentation"
+
     add-highlighter window/ regex 'if err .*?\{.*?\}' 0:comment
 
     eval %sh{kak-lsp --kakoune -s $kak_session}
     lsp-start
-    lsp-auto-hover-enable
-    lsp-auto-hover-insert-mode-enable 
+    map window goto d <esc>:lsp-definition<ret> -docstring "Jump to definition"
+    map window user d <esc>:lsp-definition<ret> -docstring "Jump to definition"
+#    lsp-auto-hover-enable
+    lsp-auto-hover-insert-mode-enable
     map window goto r <esc>:lsp-references<ret> -docstring "references to symbol under cursor"
+    map window user k <esc>:lsp-document-symbol<ret> -docstring "Show documentation"
+    map window user h <esc>:lsp-hover<ret> -docstring "Show documentation"
 }
 hook global WinSetOption filetype=.+ %{
     try %{ addhl global regex \<(TODO|FIXME|XXX|NOTE)\> 0:green }
@@ -152,6 +155,7 @@ map global user p %{| nc termbin.com 9999<ret>xyuP<a-;>k,c} -docstring "Publish 
 map global user r %{: prompt %{Run:} %{echo %sh{tmux send-keys -t +1 "$kak_text" Enter }}<ret>} -docstring "Run command in next tmux window"
 map global user t %{: nop %sh{tmux selectp -t +1}<ret>} -docstring "Switch to next tmux window"
 map global user T %{: nop %sh{tmux split -v -p 20\; last-pane}<ret>} -docstring "Create new tmux window below"
+map global user g %{<A-i>w,m<esc>:grep <C-r>.<ret><esc>:evaluate-commands %sh{echo rename-buffer *grep*:`uuidgen`}<ret>}
 
 colorscheme nofrils-acme
 
