@@ -36,18 +36,15 @@ hook global WinSetOption filetype=go %{
 
     add-highlighter window/ regex 'if err .*?\{.*?\}' 0:comment
 
-    eval %sh{kak-lsp --kakoune -s $kak_session}
-    lsp-start
-    map window goto d <esc>:lsp-definition<ret> -docstring "Jump to definition"
     map window user d <esc>:lsp-definition<ret> -docstring "Jump to definition"
-#    lsp-auto-hover-enable
     lsp-auto-hover-insert-mode-enable
     map window goto r <esc>:lsp-references<ret> -docstring "references to symbol under cursor"
     map window user k <esc>:lsp-document-symbol<ret> -docstring "Show documentation"
+#   lsp-auto-hover-enable
     map window user h <esc>:lsp-hover<ret> -docstring "Show documentation"
 }
 hook global WinSetOption filetype=.+ %{
-    try %{ addhl global regex \<(TODO|FIXME|XXX|NOTE)\> 0:green }
+    try %{ addhl global regex 'TODO|FIXME|XXX|NOTE' 0:green }
 }
 hook global BufWritePost .*\.go %{
     go-format -use-goimports
@@ -58,49 +55,10 @@ hook global BufWritePre .* %{ evaluate-commands %sh{
     mkdir --parents "$container"
 }}
 
-def suspend-and-resume \
-    -override \
-    -params 1..2 \
-    -docstring 'suspend-and-resume <cli command> [<kak command after resume>]' \
-    %{ evaluate-commands %sh{
-
-    nohup sh -c "sleep 0.2; xdotool type '$1'; xdotool key Return" > /dev/null 2>&1 &
-    /usr/bin/kill -SIGTSTP $kak_client_pid
-
-    if [ ! -z "$2" ]; then
-        echo "$2"
-    fi
-}}
 def findit -params 1 -shell-script-candidates %{ pt --nogroup --nocolor --column -g "" } %{ edit %arg{1} } -docstring "Uses pt to find file"
 def git-edit -params 1 -shell-script-candidates %{ git ls-files } %{ edit %arg{1} } -docstring "Uses git ls-files to find files"
 def mkdir %{ nop %sh{ mkdir -p $(dirname $kak_buffile) } } -docstring "Creates the directory up to this file"
 def delete-buffers-matching -params 1 %{ evaluate-commands -buffer * %{ evaluate-commands %sh{ case "$kak_buffile" in $1) echo "delete-buffer" esac } } }
-def -hidden text-object-indented-paragraph %{
-    execute-keys -draft -save-regs '' '<a-i>pZ'
-    execute-keys '<a-i>i<a-z>i'
-}
-def Lint %{
-    map global normal <left> %{
-        : lint-previous-error<ret>
-    } -docstring "Prev lint error"
-    map global normal <right> %{
-        : lint-next-error<ret>} -docstring "Next lint error"
-        lint
-    } -docstring "Runs :lint and overrides <left> and <right>"
-def Make %{
-    map global normal <left> %{
-        : make-previous-error<ret>
-    } -docstring "Prev make error"
-    map global normal <right> %{
-        : make-next-error<ret>} -docstring "Next make error"
-        make
-    } -docstring "Runs :make and overrides <left> and <right>"
-def Spell %{
-    map global normal <left> %{: spell-replace<ret>} -docstring "Replace spelling error"
-    map global normal <right> %{
-        : spell-next<ret>} -docstring "Next spelling error"
-        spell
-    } -docstring "Runs :spell and overrides <left> and <right>"
 def toggle-highlighter -params .. -docstring 'toggle-highlighter <argument>…: toggle an highlighter' %{
     try %{
         addhl window/%arg{@} %arg{@}
@@ -109,9 +67,6 @@ def toggle-highlighter -params .. -docstring 'toggle-highlighter <argument>…: 
         rmhl window/%arg{@}
         echo -markup {red} %arg{@}
     }
-}
-def tig-blame -override -docstring 'Open blame in tig for current file and line' %{
-        suspend-and-resume "tig blame +%val{cursor_line} %val{buffile}"
 }
 def ide %{
     rename-client main
@@ -139,7 +94,6 @@ alias global wqa! write-all-quit
 alias global wq write-quit
 alias global wq! write-quit!
 
-map global normal <c-p> ': fzf-mode<ret>'
 map global normal -docstring "Quick find" -- - %{: findit <tab>}
 map global normal <down> %{: grep-next-match<ret>} -docstring "Next grep match"
 map global normal <left> %{: buffer-previous<ret>} -docstring "Prev buffer"
@@ -159,6 +113,8 @@ map global user g %{<A-i>w,m<esc>:grep <C-r>.<ret><esc>:evaluate-commands %sh{ec
 
 colorscheme nofrils-acme
 
+eval %sh{kak-lsp --kakoune -s $kak_session}
+lsp-enable
+
 evaluate-commands %sh{ [ -f $kak_config/local.kak ] && echo "source $kak_config/local.kak" } # machine local
 try %{ source .kakrc.local } # project local
-
