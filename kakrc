@@ -114,6 +114,7 @@ map global user g %{<A-i>w,m<esc>:grep <C-r>.<ret><esc>:evaluate-commands %sh{ec
 colorscheme nofrils-acme
 
 eval %sh{kak-lsp --kakoune -s $kak_session}
+lsp-start
 lsp-enable
 
 evaluate-commands %sh{ [ -f $kak_config/local.kak ] && echo "source $kak_config/local.kak" } # machine local
