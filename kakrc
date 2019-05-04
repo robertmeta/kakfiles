@@ -9,7 +9,7 @@
 eval %sh{
     for tool in ag pt rg; do
         if command -V "$tool" >/dev/null 2>/dev/null; then
-            printf "set global grepcmd %s\n" "$tool"
+            printf "set global grepcmd '%s --column'\n" "$tool"
         fi
     done
 }
@@ -111,7 +111,6 @@ map global user <a-w> ':toggle-highlighter wrap -word<ret>' -docstring "toggle w
 map global user c %{: comment-line<ret>} -docstring "Comment or uncomment selected lines"
 map global user M %{: mark-clear<ret>} -docstring "Remove word marking"
 map global user m %{: mark-word<ret>} -docstring "Mark word with highlight"
-map global user p %{| nc termbin.com 9999<ret>xyuP<a-;>k,c} -docstring "Publish to termbin.com"
 map global user r %{: prompt %{Run:} %{echo %sh{tmux send-keys -t +1 "$kak_text" Enter }}<ret>} -docstring "Run command in next tmux window"
 map global user t %{: nop %sh{tmux selectp -t +1}<ret>} -docstring "Switch to next tmux window"
 map global user T %{: nop %sh{tmux split -v -p 20\; last-pane}<ret>} -docstring "Create new tmux window below"
