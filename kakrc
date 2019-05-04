@@ -6,6 +6,16 @@
 # - goimports for code formatting on save (https://golang.org/x/tools/cmd/goimports)
 # - gogetdoc for documentation display and source jump (https://github.com/zmb3/gogetdoc)
 # - jq for json deserializaton, required by gogetdoc
+eval %sh{
+    for tool in ag pt rg; do
+        if command -V "$tool" >/dev/null 2>/dev/null; then
+            printf "set global grepcmd %s\n" "$tool"
+        fi
+    done
+}
+set global ui_options ncurses_assistant=none ncurses_enable_mouse=true ncurses_set_title=false ncurses_wheel_down_button=0
+set global indentwidth 4
+set global scrolloff 5,5
 
 hook global InsertCompletionShow .* %{
     map window insert <tab> <c-n>
@@ -44,7 +54,7 @@ hook global WinSetOption filetype=go %{
     map window user h <esc>:lsp-hover<ret> -docstring "Show documentation"
 }
 hook global WinSetOption filetype=.+ %{
-    try %{ addhl global regex 'TODO|FIXME|XXX|NOTE' 0:green }
+    try %{ addhl global/ regex 'TODO|FIXME|XXX|NOTE' 0:+rb}
 }
 hook global BufWritePost .*\.go %{
     go-format -use-goimports
@@ -77,11 +87,6 @@ def ide %{
     set global docsclient docs
 }
 
-set global grepcmd 'pt --nogroup --nocolor -e'
-set global ui_options ncurses_assistant=none ncurses_enable_mouse=true ncurses_set_title=false ncurses_wheel_down_button=0
-set global indentwidth 4
-set global scrolloff 5,5
-
 alias global bd delete-buffer
 alias global colo colorscheme
 alias global color colorscheme
@@ -99,6 +104,7 @@ map global normal <down> %{: grep-next-match<ret>} -docstring "Next grep match"
 map global normal <left> %{: buffer-previous<ret>} -docstring "Prev buffer"
 map global normal <right> %{: buffer-next<ret>} -docstring "Next buffer"
 map global normal <up> %{: grep-previous-match<ret>} -docstring "Prev grep match"
+map global normal <a-I> ': enter-user-mode split-object<ret>'
 map global object h 'c<gt>,<lt><ret>' -docstring "select in the (h)tml angle brackets"
 map global object b 'c\s,\s<ret>' -docstring "select (b)etween whitespace"
 map global user <a-w> ':toggle-highlighter wrap -word<ret>' -docstring "toggle wordwrap"
@@ -109,7 +115,10 @@ map global user p %{| nc termbin.com 9999<ret>xyuP<a-;>k,c} -docstring "Publish 
 map global user r %{: prompt %{Run:} %{echo %sh{tmux send-keys -t +1 "$kak_text" Enter }}<ret>} -docstring "Run command in next tmux window"
 map global user t %{: nop %sh{tmux selectp -t +1}<ret>} -docstring "Switch to next tmux window"
 map global user T %{: nop %sh{tmux split -v -p 20\; last-pane}<ret>} -docstring "Create new tmux window below"
-map global user g %{<A-i>w"gy<esc>: grep <C-r>g<ret>: try %{delete-buffer *grep*:<C-r>g}<ret> : try %{rename-buffer *grep*:<C-r>g}<ret> : try %{mark-pattern set <C-r>g}<ret>}    
+map global user g %{<A-i>w"gy<esc>: grep <C-r>g<ret>: try %{delete-buffer *grep*:<C-r>g}<ret> : try %{rename-buffer *grep*:<C-r>g}<ret> : try %{mark-pattern set <C-r>g}<ret>} -docstring "Grep for word under cursor, persist results"
+map global user e %{: expand<ret>} -docstring "Expand selection"
+map global user s %{: enter-user-mode split-object<ret>} -docstring "Split by object"
+
 colorscheme nofrils-acme
 
 eval %sh{kak-lsp --kakoune -s $kak_session}
