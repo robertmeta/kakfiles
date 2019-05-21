@@ -115,11 +115,11 @@ map global user c %{: comment-line<ret>} -docstring "Comment or uncomment select
 map global user M %{: mark-clear<ret>} -docstring "Remove word marking"
 map global user m %{: mark-word<ret>} -docstring "Mark word with highlight"
 map global user r %{: prompt %{Run:} %{echo %sh{tmux send-keys -t +1 "$kak_text" Enter }}<ret>} -docstring "Run command in next tmux window"
-map global user t %{: nop %sh{tmux selectp -t +1}<ret>} -docstring "Switch to next tmux window"
-map global user T %{: nop %sh{tmux split -v -p 20\; last-pane}<ret>} -docstring "Create new tmux window below"
 map global user g %{<A-i>w"gy<esc>: grep <C-r>g<ret>: try %{delete-buffer *grep*:<C-r>g}<ret> : try %{rename-buffer *grep*:<C-r>g}<ret> : try %{mark-pattern set <C-r>g}<ret>} -docstring "Grep for word under cursor, persist results"
 map global user e %{: expand<ret>} -docstring "Expand selection"
-map global user s %{: enter-user-mode split-object<ret>} -docstring "Split by object"
+map global user S %{: enter-user-mode split-object<ret>} -docstring "Split by object"
+map global user b %{: tmux-terminal-window tig blame -- %val{buffile}<ret>} -docstring "Blame for current file"
+map global user s %{: tmux-terminal-window tig status<ret>} -docstring "Git status (for committing)"
 
 colorscheme nofrils-acme
 
