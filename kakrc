@@ -31,12 +31,19 @@ hook global WinCreate ^[^*]+$ %{
     add-highlighter global/ dynregex '%reg{/}' 0:+u
 
     # for mark.kak
-    set-face global MarkFace1 rgb:000000,rgb:FFA07A
-    set-face global MarkFace2 rgb:000000,rgb:D3D3D3
-    set-face global MarkFace3 rgb:000000,rgb:B0E0E6
-    set-face global MarkFace4 rgb:000000,rgb:7CFC00
-    set-face global MarkFace5 rgb:000000,rgb:FFD700
-    set-face global MarkFace6 rgb:000000,rgb:D8BFD8
+    set-face global MarkFace1 rgb:000000,rgb:00FF4D
+    set-face global MarkFace2 rgb:000000,rgb:F9D3FA
+    set-face global MarkFace3 rgb:000000,rgb:A3B3FF
+    set-face global MarkFace4 rgb:000000,rgb:BAF2C0
+    set-face global MarkFace5 rgb:000000,rgb:FBAEB2
+    set-face global MarkFace6 rgb:000000,rgb:FBFF00
+    # 
+    # set-face global MarkFace1 rgb:000000,rgb:FFA07A
+    # set-face global MarkFace2 rgb:000000,rgb:D3D3D3
+    # set-face global MarkFace3 rgb:000000,rgb:B0E0E6
+    # set-face global MarkFace4 rgb:000000,rgb:7CFC00
+    # set-face global MarkFace5 rgb:000000,rgb:FFD700
+    # set-face global MarkFace6 rgb:000000,rgb:D8BFD8
 }
 hook global WinSetOption filetype=go %{
     set window indentwidth 0 # 0 means real tab
