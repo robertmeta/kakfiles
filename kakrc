@@ -74,7 +74,6 @@ hook global BufWritePre .* %{ evaluate-commands %sh{
 
 
 
-def ranger -params .. -file-completion %(connect ranger %arg(@)) -docstring "Open with ranger"
 def findit -params 1 -shell-script-candidates %{ pt --nogroup --nocolor --column -g "" } %{ edit %arg{1} } -docstring "Uses pt to find file"
 def git-edit -params 1 -shell-script-candidates %{ git ls-files } %{ edit %arg{1} } -docstring "Uses git ls-files to find files"
 def mkdir %{ nop %sh{ mkdir -p $(dirname $kak_buffile) } } -docstring "Creates the directory up to this file"
