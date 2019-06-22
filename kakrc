@@ -126,6 +126,7 @@ map global user e %{: expand<ret>} -docstring "Expand selection"
 map global user S %{: enter-user-mode split-object<ret>} -docstring "Split by object"
 map global user b %{: tmux-terminal-window tig blame -- %val{buffile}<ret>} -docstring "Blame for current file"
 map global user s %{: tmux-terminal-window tig status<ret>} -docstring "Git status (for committing)"
+map global user f %{: tmux-terminal-window nnn<ret>} -docstring "Ranger"
 
 colorscheme nofrils-acme
 
