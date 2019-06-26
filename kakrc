@@ -65,9 +65,7 @@ hook global BufWritePre .* %{ evaluate-commands %sh{
     mkdir --parents "$container"
 }}
 
-
-
-def ranger -params .. -file-completion %(connect ranger %arg(@)) -docstring "Open with ranger"
+def lf -params .. -file-completion %(connect lf %arg(@)) -docstring "Open with lf"
 def findit -params 1 -shell-script-candidates %{ pt --nogroup --nocolor --column -g "" } %{ edit %arg{1} } -docstring "Uses pt to find file"
 def git-edit -params 1 -shell-script-candidates %{ git ls-files } %{ edit %arg{1} } -docstring "Uses git ls-files to find files"
 def mkdir %{ nop %sh{ mkdir -p $(dirname $kak_buffile) } } -docstring "Creates the directory up to this file"
@@ -120,6 +118,7 @@ map global user e %{: expand<ret>} -docstring "Expand selection"
 map global user S %{: enter-user-mode split-object<ret>} -docstring "Split by object"
 map global user b %{: tmux-terminal-window tig blame -- %val{buffile}<ret>} -docstring "Blame for current file"
 map global user s %{: tmux-terminal-window tig status<ret>} -docstring "Git status (for committing)"
+map global user l %{: lf<ret>} -docstring "File browser"
 
 colorscheme nofrils-acme
 
