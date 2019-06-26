@@ -17,6 +17,29 @@ set global ui_options ncurses_assistant=none ncurses_enable_mouse=true ncurses_s
 set global indentwidth 4
 set global scrolloff 5,5
 
+set-face global MarkFace1 rgb:000000,rgb:00FF4D
+set-face global MarkFace2 rgb:000000,rgb:F9D3FA
+set-face global MarkFace3 rgb:000000,rgb:A3B3FF
+set-face global MarkFace4 rgb:000000,rgb:BAF2C0
+set-face global MarkFace5 rgb:000000,rgb:FBAEB2
+set-face global MarkFace6 rgb:000000,rgb:FBFF00
+
+add-highlighter global/ dynregex '%reg{/}' 0:+u
+add-highlighter global/ number-lines -hlcursor
+add-highlighter global/ show-matching
+addhl global/ regex 'TODO|FIXME|XXX|NOTE' 0:+rb
+
+hook global BufOpenFile .* %{
+    editorconfig-load
+}
+hook global BufOpenFile .*\.cql$ %{
+    set buffer filetype sql
+    set buffer commentline --
+}
+hook global BufNewFile .* %{ 
+    editorconfig-load 
+}
+
 hook global InsertCompletionShow .* %{
     map window insert <tab> <c-n>
     map window insert <s-tab> <c-p>
@@ -25,19 +48,11 @@ hook global InsertCompletionHide .* %{
     unmap window insert <tab> <c-n>
     unmap window insert <s-tab> <c-p>
 }
-hook global WinCreate ^[^*]+$ %{
-    add-highlighter window/ number-lines -hlcursor
-    add-highlighter global/ show-matching
-    add-highlighter global/ dynregex '%reg{/}' 0:+u
 
-    # for mark.kak
-    set-face global MarkFace1 rgb:000000,rgb:FFA07A
-    set-face global MarkFace2 rgb:000000,rgb:D3D3D3
-    set-face global MarkFace3 rgb:000000,rgb:B0E0E6
-    set-face global MarkFace4 rgb:000000,rgb:7CFC00
-    set-face global MarkFace5 rgb:000000,rgb:FFD700
-    set-face global MarkFace6 rgb:000000,rgb:D8BFD8
+hook global WinSetOption filetype=sql %{
+    map window user o %{: grep 'INSERT\|UPDATE\|DELETE\|CREATE|\DROP' %val{bufname} -H -i<ret>} -docstring "Show outline"
 }
+
 hook global WinSetOption filetype=go %{
     set window indentwidth 0 # 0 means real tab
     set window formatcmd 'goimports'
@@ -45,19 +60,18 @@ hook global WinSetOption filetype=go %{
     set window makecmd 'go build .'
 
     add-highlighter window/ regex 'if err .*?\{.*?\}' 0:comment
+    map window user o %{: grep ^func %val{bufname} -H<ret>} -docstring "Show outline"
 
-    map window user d <esc>:lsp-definition<ret> -docstring "Jump to definition"
+    lsp-enable-window
     lsp-auto-hover-insert-mode-enable
+    lsp-auto-hover-enable
+    map window user d <esc>:lsp-definition<ret> -docstring "Jump to definition"
     map window goto r <esc>:lsp-references<ret> -docstring "references to symbol under cursor"
     map window user k <esc>:lsp-document-symbol<ret> -docstring "Show documentation"
-#   lsp-auto-hover-enable
     map window user h <esc>:lsp-hover<ret> -docstring "Show documentation"
 }
-hook global WinSetOption filetype=.+ %{
-    try %{ addhl global/ regex 'TODO|FIXME|XXX|NOTE' 0:+rb}
-}
-hook global BufWritePost .*\.go %{
-    go-format -use-goimports
+hook global BufWritePost .*\.go$ %{
+    go-format
 }
 hook global BufWritePre .* %{ evaluate-commands %sh{
     container=$(dirname "$kak_hook_param")
@@ -65,7 +79,7 @@ hook global BufWritePre .* %{ evaluate-commands %sh{
     mkdir --parents "$container"
 }}
 
-def lf -params .. -file-completion %(connect lf %arg(@)) -docstring "Open with lf"
+def nnn -params .. -file-completion %(connect nnn %arg(@)) -docstring "Open with nnn"
 def findit -params 1 -shell-script-candidates %{ pt --nogroup --nocolor --column -g "" } %{ edit %arg{1} } -docstring "Uses pt to find file"
 def git-edit -params 1 -shell-script-candidates %{ git ls-files } %{ edit %arg{1} } -docstring "Uses git ls-files to find files"
 def mkdir %{ nop %sh{ mkdir -p $(dirname $kak_buffile) } } -docstring "Creates the directory up to this file"
@@ -118,13 +132,11 @@ map global user e %{: expand<ret>} -docstring "Expand selection"
 map global user S %{: enter-user-mode split-object<ret>} -docstring "Split by object"
 map global user b %{: tmux-terminal-window tig blame -- %val{buffile}<ret>} -docstring "Blame for current file"
 map global user s %{: tmux-terminal-window tig status<ret>} -docstring "Git status (for committing)"
-map global user l %{: lf<ret>} -docstring "File browser"
+map global user n %{: nnn .<ret>} -docstring "Run nnn file browser"
 
 colorscheme nofrils-acme
 
 eval %sh{kak-lsp --kakoune -s $kak_session}
-lsp-start
-lsp-enable
 
 evaluate-commands %sh{ [ -f $kak_config/local.kak ] && echo "source $kak_config/local.kak" } # machine local
 try %{ source .kakrc.local } # project local
