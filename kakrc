@@ -50,7 +50,7 @@ hook global InsertCompletionHide .* %{
 }
 
 hook global WinSetOption filetype=sql %{
-    map window user o %{: grep 'INSERT\|UPDATE\|DELETE\|CREATE|\DROP' %val{bufname} -H -i<ret>} -docstring "Show outline"
+    map window user o %{: grep ^INSERT|^UPDATE|^DELETE|^CREATE|^DROP' %val{bufname} -H -i<ret>} -docstring "Show outline"
 }
 
 hook global WinSetOption filetype=go %{
@@ -60,7 +60,7 @@ hook global WinSetOption filetype=go %{
     set window makecmd 'go build .'
 
     add-highlighter window/ regex 'if err .*?\{.*?\}' 0:comment
-    map window user o %{: grep ^func %val{bufname} -H<ret>} -docstring "Show outline"
+    map window user o %{:grep ^func|^import|^var|^package|^const|^goto|^struct|^type %val{bufname} -H<ret>} -docstring "Show outline"
 
     lsp-enable-window
     lsp-auto-hover-insert-mode-enable
