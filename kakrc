@@ -71,7 +71,7 @@ hook global WinSetOption filetype=go %{
     # map window user h <esc>:lsp-hover<ret> -docstring "Show documentation"
 }
 hook global BufWritePost .*\.go$ %{
-    go-format
+    go-format -use-goimports
 }
 hook global BufWritePre .* %{ evaluate-commands %sh{
     container=$(dirname "$kak_hook_param")
