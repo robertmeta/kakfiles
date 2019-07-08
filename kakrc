@@ -138,5 +138,5 @@ colorscheme nofrils-acme
 
 eval %sh{kak-lsp --kakoune -s $kak_session}
 
-evaluate-commands %sh{ [ -f $kak_config/local.kak ] && echo "source $kak_config/local.kak" } # machine local
+try %{ source ~/.kakrc.local } # system local
 try %{ source .kakrc.local } # project local
