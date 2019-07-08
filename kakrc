@@ -62,13 +62,13 @@ hook global WinSetOption filetype=go %{
     add-highlighter window/ regex 'if err .*?\{.*?\}' 0:comment
     map window user o %{:grep ^func|^import|^var|^package|^const|^goto|^struct|^type %val{bufname} -H<ret>} -docstring "Show outline"
 
-    lsp-enable-window
-    lsp-auto-hover-insert-mode-enable
-    lsp-auto-hover-enable
-    map window user d <esc>:lsp-definition<ret> -docstring "Jump to definition"
-    map window goto r <esc>:lsp-references<ret> -docstring "references to symbol under cursor"
-    map window user k <esc>:lsp-document-symbol<ret> -docstring "Show documentation"
-    map window user h <esc>:lsp-hover<ret> -docstring "Show documentation"
+    # lsp-enable-window
+    # lsp-auto-hover-insert-mode-enable
+    # lsp-auto-hover-enable
+    # map window user d <esc>:lsp-definition<ret> -docstring "Jump to definition"
+    # map window goto r <esc>:lsp-references<ret> -docstring "references to symbol under cursor"
+    # map window user k <esc>:lsp-document-symbol<ret> -docstring "Show documentation"
+    # map window user h <esc>:lsp-hover<ret> -docstring "Show documentation"
 }
 hook global BufWritePost .*\.go$ %{
     go-format
@@ -136,7 +136,7 @@ map global user n %{: nnn .<ret>} -docstring "Run nnn file browser"
 
 colorscheme nofrils-acme
 
-eval %sh{kak-lsp --kakoune -s $kak_session}
+# eval %sh{kak-lsp --kakoune -s $kak_session}
 
 try %{ source ~/.kakrc.local } # system local
 try %{ source .kakrc.local } # project local
