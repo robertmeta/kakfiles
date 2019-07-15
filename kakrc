@@ -28,6 +28,7 @@ add-highlighter global/ dynregex '%reg{/}' 0:+u
 add-highlighter global/ number-lines -hlcursor
 add-highlighter global/ show-matching
 addhl global/ regex 'TODO|FIXME|XXX|NOTE' 0:+rb
+addhl global/ show-whitespaces
 
 hook global BufOpenFile .* %{
     editorconfig-load
@@ -136,7 +137,7 @@ map global user n %{: nnn .<ret>} -docstring "Run nnn file browser"
 
 colorscheme nofrils-acme
 
-# eval %sh{kak-lsp --kakoune -s $kak_session}
+eval %sh{kak-lsp --kakoune -s $kak_session}
 
 try %{ source ~/.kakrc.local } # system local
 try %{ source .kakrc.local } # project local
