@@ -60,7 +60,7 @@ hook global WinSetOption filetype=go %{
     set window lintcmd 'gometalinter .'
     set window makecmd 'go build .'
 
-    add-highlighter window/ regex 'if err .*?\{.*?\}' 0:comment
+    add-highlighter window/ regex 'if err != .*?\{.*?\}' 0:comment
     map window user o %{:grep ^func|^import|^var|^package|^const|^goto|^struct|^type %val{bufname} -H<ret>} -docstring "Show outline"
 
     # lsp-enable-window
