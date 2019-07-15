@@ -28,7 +28,7 @@ add-highlighter global/ dynregex '%reg{/}' 0:+u
 add-highlighter global/ number-lines -hlcursor
 add-highlighter global/ show-matching
 addhl global/ regex 'TODO|FIXME|XXX|NOTE' 0:+rb
-addhl global/ show-whitespaces
+addhl global/ show-whitespaces -spc ' '
 
 hook global BufOpenFile .* %{
     editorconfig-load
