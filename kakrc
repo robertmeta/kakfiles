@@ -48,9 +48,21 @@ hook global InsertCompletionHide .* %{
     unmap window insert <tab> <c-n>
     unmap window insert <s-tab> <c-p>
 }
-
 hook global WinSetOption filetype=sql %{
-    map window user o %{: grep ^INSERT|^UPDATE|^DELETE|^CREATE|^DROP' %val{bufname} -H -i<ret>} -docstring "Show outline"
+    map window user o %{: grep TODO|FIXME|XXX|NOTE|^INSERT|^UPDATE|^DELETE|^CREATE|^DROP' %val{bufname} -H -i<ret>} -docstring "Show outline"
+}
+hook global WinSetOption filetype=typescript %{
+    map window user o %{:grep TODO|FIXME|XXX|NOTE|^function|^const|^class|^interface|^import|^type %val{bufname} -H<ret>} -docstring "Show outline"
+    set window formatcmd 'tsfmt'
+    set window lintcmd 'tslint'
+
+    lsp-enable-window
+    lsp-auto-hover-insert-mode-enable
+    lsp-auto-hover-enable
+    map window user d <esc>:lsp-definition<ret> -docstring "Jump to definition"
+    map window goto r <esc>:lsp-references<ret> -docstring "references to symbol under cursor"
+    map window user k <esc>:lsp-document-symbol<ret> -docstring "Show documentation"
+    map window user h <esc>:lsp-hover<ret> -docstring "Show documentation"
 }
 
 hook global WinSetOption filetype=go %{
@@ -60,15 +72,15 @@ hook global WinSetOption filetype=go %{
     set window makecmd 'go build .'
 
     add-highlighter window/ regex 'if err .*?\{.*?\}' 0:comment
-    map window user o %{:grep ^func|^import|^var|^package|^const|^goto|^struct|^type %val{bufname} -H<ret>} -docstring "Show outline"
+    map window user o %{:grep TODO|FIXME|XXX|NOTE|^func|^import|^var|^package|^const|^goto|^struct|^type %val{bufname} -H<ret>} -docstring "Show outline"
 
-    # lsp-enable-window
-    # lsp-auto-hover-insert-mode-enable
-    # lsp-auto-hover-enable
-    # map window user d <esc>:lsp-definition<ret> -docstring "Jump to definition"
-    # map window goto r <esc>:lsp-references<ret> -docstring "references to symbol under cursor"
-    # map window user k <esc>:lsp-document-symbol<ret> -docstring "Show documentation"
-    # map window user h <esc>:lsp-hover<ret> -docstring "Show documentation"
+    lsp-enable-window
+    lsp-auto-hover-insert-mode-enable
+    lsp-auto-hover-enable
+    map window user d <esc>:lsp-definition<ret> -docstring "Jump to definition"
+    map window goto r <esc>:lsp-references<ret> -docstring "references to symbol under cursor"
+    map window user k <esc>:lsp-document-symbol<ret> -docstring "Show documentation"
+    map window user h <esc>:lsp-hover<ret> -docstring "Show documentation"
 }
 hook global BufWritePost .*\.go$ %{
     go-format -use-goimports
@@ -136,7 +148,7 @@ map global user n %{: nnn .<ret>} -docstring "Run nnn file browser"
 
 colorscheme nofrils-acme
 
-# eval %sh{kak-lsp --kakoune -s $kak_session}
+eval %sh{kak-lsp --kakoune -s $kak_session}
 
 try %{ source ~/.kakrc.local } # system local
 try %{ source .kakrc.local } # project local
