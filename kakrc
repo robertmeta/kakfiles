@@ -30,13 +30,6 @@ add-highlighter global/ show-matching
 addhl global/ regex 'TODO|FIXME|XXX|NOTE' 0:+rb
 addhl global/ show-whitespaces -spc ' '
 
-hook global ModuleLoaded smarttab %{
-    set-option global sofftabstop 4
-    # you can configure text that is being used to represent curent active mode
-    set-option global smarttab_expandtab_mode_name 'exp'
-    set-option global smarttab_noexpandtab_mode_name 'noexp'
-    set-option global smarttab_smarttab_mode_name 'smart'
-}
 hook global BufOpenFile .* %{
     editorconfig-load
 }
