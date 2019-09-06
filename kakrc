@@ -138,8 +138,6 @@ def ide %{
     set global jumpclient main
     new rename-client tools
     set global toolsclient tools
-    new rename-client docs
-    set global docsclient docs
 }
 
 alias global bd delete-buffer
@@ -178,7 +176,9 @@ map global user n %{: nnn .<ret>} -docstring "Run nnn file browser"
 
 colorscheme nofrils-acme
 
-eval %sh{kak-lsp --kakoune -s $kak_session}
+eval %sh{kak-lsp --kakoune --config ~/.config/kak-lsp/kak-lsp.toml -s $kak_session}
 
 try %{ source ~/.kakrc.local } # system local
 try %{ source .kakrc.local } # project local
+
+ide
