@@ -40,8 +40,6 @@ hook global BufOpenFile .*\.cql$ %{
 hook global BufNewFile .* %{ 
     editorconfig-load 
 }
-
-
 hook global InsertCompletionShow .* %{
     try %{
         # this command temporarily removes cursors preceded by whitespace;
@@ -57,19 +55,15 @@ hook global InsertCompletionHide .* %{
     unmap window insert <tab> <c-n>
     unmap window insert <s-tab> <c-p>
 }
-hook global InsertChar \t %{ try %{
-    execute-keys -draft "h<a-h><a-k>\A\h+\z<ret><a-;>;%opt{indentwidth}@"
-}}
-hook global InsertDelete ' ' %{ try %{
-    execute-keys -draft 'h<a-h><a-k>\A\h+\z<ret>i<space><esc><lt>'
-}}
-
 hook global WinSetOption filetype=sql %{
     map window user o %{: grep TODO|FIXME|XXX|NOTE|^INSERT|^UPDATE|^DELETE|^CREATE|^DROP' %val{bufname} -H -i<ret>} -docstring "Show outline"
 }
 hook global WinSetOption filetype=typescript %{
     set window indentwidth=2
+    hook window InsertChar \t %{ try %{ execute-keys -draft "h<a-h><a-k>\A\h+\z<ret><a-;>;%opt{indentwidth}@" }}
+    hook window InsertDelete ' ' %{ try %{ execute-keys -draft 'h<a-h><a-k>\A\h+\z<ret>i<space><esc><lt>' }}
     map window user o %{:grep TODO|FIXME|XXX|NOTE|^function|^const|^class|^interface|^import|^type %val{bufname} -H<ret>} -docstring "Show outline"
+
     set window formatcmd 'tsfmt'
     set window lintcmd 'tslint'
 
@@ -81,7 +75,23 @@ hook global WinSetOption filetype=typescript %{
     map window user k <esc>:lsp-document-symbol<ret> -docstring "Show documentation"
     map window user h <esc>:lsp-hover<ret> -docstring "Show documentation"
 }
+hook global WinSetOption filetype=javascript %{
+    set window indentwidth=2
+    hook window InsertChar \t %{ try %{ execute-keys -draft "h<a-h><a-k>\A\h+\z<ret><a-;>;%opt{indentwidth}@" }}
+    hook window InsertDelete ' ' %{ try %{ execute-keys -draft 'h<a-h><a-k>\A\h+\z<ret>i<space><esc><lt>' }}
+    map window user o %{:grep TODO|FIXME|XXX|NOTE|^function|^const|^class|^interface|^import|^type %val{bufname} -H<ret>} -docstring "Show outline"
 
+    set window formatcmd 'jsfmt'
+    set window lintcmd 'jslint'
+
+    lsp-enable-window
+    lsp-auto-hover-insert-mode-enable
+    lsp-auto-hover-enable
+    map window user d <esc>:lsp-definition<ret> -docstring "Jump to definition"
+    map window goto r <esc>:lsp-references<ret> -docstring "references to symbol under cursor"
+    map window user k <esc>:lsp-document-symbol<ret> -docstring "Show documentation"
+    map window user h <esc>:lsp-hover<ret> -docstring "Show documentation"
+}
 hook global WinSetOption filetype=go %{
     set window indentwidth 0 # 0 means real tab
     set window formatcmd 'goimports'
