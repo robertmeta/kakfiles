@@ -14,8 +14,12 @@ eval %sh{
     done
 }
 set global ui_options ncurses_assistant=none ncurses_enable_mouse=true ncurses_set_title=false ncurses_wheel_down_button=0
-set global indentwidth 4
 set global scrolloff 5,5
+
+# Indent
+set global indentwidth 4
+map global insert <tab> '<a-;><gt>'
+map global insert <s-tab> '<a-;><lt>'
 
 set-face global MarkFace1 rgb:000000,rgb:00FF4D
 set-face global MarkFace2 rgb:000000,rgb:F9D3FA
@@ -40,28 +44,11 @@ hook global BufOpenFile .*\.cql$ %{
 hook global BufNewFile .* %{ 
     editorconfig-load 
 }
-hook global InsertCompletionShow .* %{
-    try %{
-        # this command temporarily removes cursors preceded by whitespace;
-        # if there are no cursors left, it raises an error, does not
-        # continue to execute the mapping commands, and the error is eaten
-        # by the `try` command so no warning appears.
-        execute-keys -draft 'h<a-K>\h<ret>'
-        map window insert <tab> <c-n>
-        map window insert <s-tab> <c-p>
-    }
-}
-hook global InsertCompletionHide .* %{
-    unmap window insert <tab> <c-n>
-    unmap window insert <s-tab> <c-p>
-}
 hook global WinSetOption filetype=sql %{
     map window user o %{: grep TODO|FIXME|XXX|NOTE|^INSERT|^UPDATE|^DELETE|^CREATE|^DROP' %val{bufname} -H -i<ret>} -docstring "Show outline"
 }
 hook global WinSetOption filetype=typescript %{
-    set window indentwidth=2
-    hook window InsertChar \t %{ try %{ execute-keys -draft "h<a-h><a-k>\A\h+\z<ret><a-;>;%opt{indentwidth}@" }}
-    hook window InsertDelete ' ' %{ try %{ execute-keys -draft 'h<a-h><a-k>\A\h+\z<ret>i<space><esc><lt>' }}
+    set window indentwidth 2
     map window user o %{:grep TODO|FIXME|XXX|NOTE|^function|^const|^class|^interface|^import|^type %val{bufname} -H<ret>} -docstring "Show outline"
 
     set window formatcmd 'tsfmt'
@@ -76,35 +63,37 @@ hook global WinSetOption filetype=typescript %{
     map window user h <esc>:lsp-hover<ret> -docstring "Show documentation"
 }
 hook global WinSetOption filetype=javascript %{
-    set window indentwidth=2
-    hook window InsertChar \t %{ try %{ execute-keys -draft "h<a-h><a-k>\A\h+\z<ret><a-;>;%opt{indentwidth}@" }}
-    hook window InsertDelete ' ' %{ try %{ execute-keys -draft 'h<a-h><a-k>\A\h+\z<ret>i<space><esc><lt>' }}
-    map window user o %{:grep TODO|FIXME|XXX|NOTE|^function|^const|^class|^interface|^import|^type %val{bufname} -H<ret>} -docstring "Show outline"
-
+    set window indentwidth 2
     set window formatcmd 'jsfmt'
     set window lintcmd 'jslint'
 
     lsp-enable-window
     lsp-auto-hover-insert-mode-enable
     lsp-auto-hover-enable
+
+    map window user o %{:grep TODO|FIXME|XXX|NOTE|^function|^const|^class|^interface|^import|^type %val{bufname} -H<ret>} -docstring "Show outline"
     map window user d <esc>:lsp-definition<ret> -docstring "Jump to definition"
     map window goto r <esc>:lsp-references<ret> -docstring "references to symbol under cursor"
     map window user k <esc>:lsp-document-symbol<ret> -docstring "Show documentation"
     map window user h <esc>:lsp-hover<ret> -docstring "Show documentation"
 }
 hook global WinSetOption filetype=go %{
+    unmap global insert <tab> '<a-;><gt>'
+    unmap global insert <s-tab> '<a-;><lt>'
+
     set window indentwidth 0 # 0 means real tab
     set window formatcmd 'goimports'
     set window lintcmd 'gometalinter .'
     set window makecmd 'go build .'
 
-    map window user o %{:grep TODO|FIXME|XXX|NOTE|^func|^import|^var|^package|^const|^goto|^struct|^type %val{bufname} -H<ret>} -docstring "Show outline"
-    add-highlighter window/ regex 'if err != .*?\{.*?\}' 0:comment
+    add-highlighter window/ regex 'if err != nil .*?\{.*?\}' 0:comment
 
     lsp-enable-window
     lsp-auto-hover-insert-mode-enable
     lsp-auto-hover-enable
+
     map window user d <esc>:lsp-definition<ret> -docstring "Jump to definition"
+    map window user o %{:grep TODO|FIXME|XXX|NOTE|^func|^import|^var|^package|^const|^goto|^struct|^type %val{bufname} -H<ret>} -docstring "Show outline"
     map window goto r <esc>:lsp-references<ret> -docstring "references to symbol under cursor"
     map window user k <esc>:lsp-document-symbol<ret> -docstring "Show documentation"
     map window user h <esc>:lsp-hover<ret> -docstring "Show documentation"
