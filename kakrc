@@ -180,5 +180,3 @@ eval %sh{kak-lsp --kakoune --config ~/.config/kak-lsp/kak-lsp.toml -s $kak_sessi
 
 try %{ source ~/.kakrc.local } # system local
 try %{ source .kakrc.local } # project local
-
-ide
