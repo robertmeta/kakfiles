@@ -30,6 +30,13 @@ add-highlighter global/ show-matching
 addhl global/ regex 'TODO|FIXME|XXX|NOTE' 0:+rb
 addhl global/ show-whitespaces -spc ' '
 
+hook global ModuleLoaded smarttab %{
+    set-option global sofftabstop 4
+    # you can configure text that is being used to represent curent active mode
+    set-option global smarttab_expandtab_mode_name 'exp'
+    set-option global smarttab_noexpandtab_mode_name 'noexp'
+    set-option global smarttab_smarttab_mode_name 'smart'
+}
 hook global BufOpenFile .* %{
     editorconfig-load
 }
@@ -53,6 +60,8 @@ hook global WinSetOption filetype=sql %{
     map window user o %{: grep TODO|FIXME|XXX|NOTE|^INSERT|^UPDATE|^DELETE|^CREATE|^DROP' %val{bufname} -H -i<ret>} -docstring "Show outline"
 }
 hook global WinSetOption filetype=typescript %{
+    set-option global sofftabstop 2
+    noexpandtab
     map window user o %{:grep TODO|FIXME|XXX|NOTE|^function|^const|^class|^interface|^import|^type %val{bufname} -H<ret>} -docstring "Show outline"
     set window formatcmd 'tsfmt'
     set window lintcmd 'tslint'
