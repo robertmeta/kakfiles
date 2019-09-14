@@ -1,6 +1,6 @@
 # This expects a few things
 #
-# - pt for searching (https://github.com/ggreer/the_silver_searcher)
+# - rg for searching (ripgrep power!)
 # - ctags for well tags (https://github.com/universal-ctags/ctags)
 # - gocode for code completion (https://github.com/nsf/gocode)
 # - goimports for code formatting on save (https://golang.org/x/tools/cmd/goimports)
@@ -120,7 +120,7 @@ hook global BufWritePre .* %{ evaluate-commands %sh{
 }}
 
 def nnn -params .. -file-completion %(connect nnn %arg(@)) -docstring "Open with nnn"
-def findit -params 1 -shell-script-candidates %{ pt --nogroup --nocolor --column -g "" } %{ edit %arg{1} } -docstring "Uses pt to find file"
+def findit -params 1 -shell-script-candidates %{ rg --files } %{ edit %arg{1} } -docstring "Uses pt to find file"
 def git-edit -params 1 -shell-script-candidates %{ git ls-files } %{ edit %arg{1} } -docstring "Uses git ls-files to find files"
 def mkdir %{ nop %sh{ mkdir -p $(dirname $kak_buffile) } } -docstring "Creates the directory up to this file"
 def delete-buffers-matching -params 1 %{ evaluate-commands -buffer * %{ evaluate-commands %sh{ case "$kak_buffile" in $1) echo "delete-buffer" esac } } }
@@ -164,8 +164,9 @@ map global user <a-w> ':toggle-highlighter wrap -word<ret>' -docstring "toggle w
 map global user c %{: comment-line<ret>} -docstring "Comment or uncomment selected lines"
 map global user M %{: mark-clear<ret>} -docstring "Remove word marking"
 map global user m %{: mark-word<ret>} -docstring "Mark word with highlight"
-map global user r %{<esc>,R<up><ret>} -docstring "Rerun last command set with R"
-map global user R %{: prompt %{Run:} %{echo %sh{tmux send-keys -t +1 "$kak_text" Enter }}<ret>} -docstring "Run command in next tmux window"
+map global user t %{: connect-terminal<ret>} -docstring "Start connected terminal"
+map global user r %{: %sh{tmux send-keys -t {bottom-right} Up Enter }<ret>} -docstring "Rerun in bottom-right"
+map global user R %{: %sh{tmux send-keys -t {bottom-right} C-c C-c C-c Up Enter }<ret>} -docstring "Cancel and rerun in bottom-right"
 map global user l %{: grep '' %val{bufname} -H<left><left><left><left><left><left><left><left><left><left><left><left><left><left><left><left><left><left>} -docstring "Local grep"
 map global user g %{<A-i>w"gy<esc>: grep <C-r>g<ret>: try %{delete-buffer *grep*:<C-r>g}<ret> : try %{rename-buffer *grep*:<C-r>g}<ret> : try %{mark-pattern set <C-r>g}<ret>} -docstring "Grep for word under cursor, persist results"
 map global user e %{: expand<ret>} -docstring "Expand selection"
