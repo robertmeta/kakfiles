@@ -65,32 +65,27 @@ hook global WinSetOption filetype=sql %{
 hook global WinSetOption filetype=typescript %{
     set window indentwidth 2
     map window user o %{:grep TODO|FIXME|XXX|NOTE|^function|^const|^class|^interface|^import|^type %val{bufname} -H<ret>} -docstring "Show outline"
-
-    set window formatcmd 'tsfmt'
     set window lintcmd 'tslint'
-
-    lsp-enable-window
-    lsp-auto-hover-insert-mode-enable
-    lsp-auto-hover-enable
-    map window user d <esc>:lsp-definition<ret> -docstring "Jump to definition"
-    map window goto r <esc>:lsp-references<ret> -docstring "references to symbol under cursor"
-    map window user k <esc>:lsp-document-symbol<ret> -docstring "Show documentation"
-    map window user h <esc>:lsp-hover<ret> -docstring "Show documentation"
+    set window formatcmd 'prettier --stdin --parser typescript'
+    hook buffer BufWritePre .* %{format}
+}
+hook global WinSetOption filetype=css %{
+    set window indentwidth 2
+    set window formatcmd 'prettier --stdin --parser css'
+    hook buffer BufWritePre .* %{format}
+}
+hook global WinSetOption filetype=json %{
+    set window indentwidth 2
+    set window formatcmd 'prettier --stdin --parser json5'
+    hook buffer BufWritePre .* %{format}
 }
 hook global WinSetOption filetype=javascript %{
     set window indentwidth 2
     set window formatcmd 'jsfmt'
     set window lintcmd 'jslint'
-
-    lsp-enable-window
-    lsp-auto-hover-insert-mode-enable
-    lsp-auto-hover-enable
-
     map window user o %{:grep TODO|FIXME|XXX|NOTE|^function|^const|^class|^interface|^import|^type %val{bufname} -H<ret>} -docstring "Show outline"
-    map window user d <esc>:lsp-definition<ret> -docstring "Jump to definition"
-    map window goto r <esc>:lsp-references<ret> -docstring "references to symbol under cursor"
-    map window user k <esc>:lsp-document-symbol<ret> -docstring "Show documentation"
-    map window user h <esc>:lsp-hover<ret> -docstring "Show documentation"
+    set window formatcmd 'prettier --stdin --parser javascript'
+    hook buffer BufWritePre .* %{format}
 }
 hook global WinSetOption filetype=go %{
     set window indentwidth 0 # 0 means real tab
@@ -100,15 +95,8 @@ hook global WinSetOption filetype=go %{
 
     add-highlighter window/ regex 'if err != nil .*?\{.*?\}' 0:comment
 
-    lsp-enable-window
-    lsp-auto-hover-insert-mode-enable
-    lsp-auto-hover-enable
 
-    map window user d <esc>:lsp-definition<ret> -docstring "Jump to definition"
     map window user o %{:grep TODO|FIXME|XXX|NOTE|^func|^import|^var|^package|^const|^goto|^struct|^type %val{bufname} -H<ret>} -docstring "Show outline"
-    map window goto r <esc>:lsp-references<ret> -docstring "references to symbol under cursor"
-    map window user k <esc>:lsp-document-symbol<ret> -docstring "Show documentation"
-    map window user h <esc>:lsp-hover<ret> -docstring "Show documentation"
 }
 hook global BufWritePost .*\.go$ %{
     go-format -use-goimports
@@ -165,7 +153,7 @@ map global user c %{: comment-line<ret>} -docstring "Comment or uncomment select
 map global user M %{: mark-clear<ret>} -docstring "Remove word marking"
 map global user m %{: mark-word<ret>} -docstring "Mark word with highlight"
 map global user t %{: connect-terminal<ret>} -docstring "Start connected terminal"
-map global user r %{: %sh{tmux send-keys -t {bottom-right} Up Enter }<ret>} -docstring "Rerun in bottom-right"
+map global user r %{: nop %sh{tmux send-keys -t {bottom-right} Up Enter }<ret>} -docstring "Rerun in bottom-right"
 map global user R %{: %sh{tmux send-keys -t {bottom-right} C-c C-c C-c Up Enter }<ret>} -docstring "Cancel and rerun in bottom-right"
 map global user l %{: grep '' %val{bufname} -H<left><left><left><left><left><left><left><left><left><left><left><left><left><left><left><left><left><left>} -docstring "Local grep"
 map global user g %{<A-i>w"gy<esc>: grep <C-r>g<ret>: try %{delete-buffer *grep*:<C-r>g}<ret> : try %{rename-buffer *grep*:<C-r>g}<ret> : try %{mark-pattern set <C-r>g}<ret>} -docstring "Grep for word under cursor, persist results"
@@ -178,6 +166,19 @@ map global user n %{: nnn .<ret>} -docstring "Run nnn file browser"
 colorscheme nofrils-acme
 
 eval %sh{kak-lsp --kakoune --config ~/.config/kak-lsp/kak-lsp.toml -s $kak_session}
+#set global lsp_cmd "kak-lsp --convifg ~/.config/kak-lsp/kak-lsp.toml -s %val{session} -vvv --log /tmp/kak-lsp.log"
+#eval %sh{kak-lsp --kakoune -s $kak_session}
+hook global WinSetOption filetype=(rust|python|go|javascript|typescript|c|cpp) %{
+    lsp-enable-window
+    lsp-auto-hover-enable
+    lsp-auto-hover-insert-mode-enable
+    lsp-auto-hover-signature-help-enable
+    map window user d <esc>:lsp-definition<ret> -docstring "Jump to definition"
+    map window goto r <esc>:lsp-references<ret> -docstring "references to symbol under cursor"
+    map window user k <esc>:lsp-document-symbol<ret> -docstring "Show documentation"
+    map window user h <esc>:lsp-hover<ret> -docstring "Show documentation"
+}
+
 
 try %{ source ~/.kakrc.local } # system local
 try %{ source .kakrc.local } # project local
