@@ -59,12 +59,16 @@ hook global BufOpenFile .*\.cql$ %{
 hook global BufNewFile .* %{ 
     editorconfig-load 
 }
+hook global WinCreate .* %{
+    snippets-enable
+}
 hook global WinSetOption filetype=sql %{
     map window user o %{: grep TODO|FIXME|XXX|NOTE|^INSERT|^UPDATE|^DELETE|^CREATE|^DROP' %val{bufname} -H -i<ret>} -docstring "Show outline"
 }
 hook global WinSetOption filetype=typescript %{
+    set-option -add window snippets cl 'console.log('X', JSON.stringify(X))<esc><a-/>X<ret><a-n>c'
     set window indentwidth 2
-    map window user o %{:grep TODO|FIXME|XXX|NOTE|^function|^const|^class|^interface|^import|^type %val{bufname} -H<ret>} -docstring "Show outline"
+    map window user o %{:grep TODO|FIXME|XXX|NOTE|^function|^export|^enum|^static|^require|^import|^package|^const|^class|^interface|^import|^type %val{bufname} -H<ret>} -docstring "Show outline"
     set window lintcmd 'tslint'
     set window formatcmd 'prettier --stdin --parser typescript'
     hook buffer BufWritePre .* %{format}
@@ -81,9 +85,9 @@ hook global WinSetOption filetype=json %{
 }
 hook global WinSetOption filetype=javascript %{
     set window indentwidth 2
-    set window formatcmd 'jsfmt'
     set window lintcmd 'jslint'
     map window user o %{:grep TODO|FIXME|XXX|NOTE|^function|^const|^class|^interface|^import|^type %val{bufname} -H<ret>} -docstring "Show outline"
+    map window user 
     set window formatcmd 'prettier --stdin --parser javascript'
     hook buffer BufWritePre .* %{format}
 }
@@ -94,7 +98,6 @@ hook global WinSetOption filetype=go %{
     set window makecmd 'go build .'
 
     add-highlighter window/ regex 'if err != nil .*?\{.*?\}' 0:comment
-
 
     map window user o %{:grep TODO|FIXME|XXX|NOTE|^func|^import|^var|^package|^const|^goto|^struct|^type %val{bufname} -H<ret>} -docstring "Show outline"
 }
@@ -178,7 +181,6 @@ hook global WinSetOption filetype=(rust|python|go|javascript|typescript|c|cpp) %
     map window user k <esc>:lsp-document-symbol<ret> -docstring "Show documentation"
     map window user h <esc>:lsp-hover<ret> -docstring "Show documentation"
 }
-
 
 try %{ source ~/.kakrc.local } # system local
 try %{ source .kakrc.local } # project local
