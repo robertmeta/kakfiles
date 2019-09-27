@@ -18,22 +18,12 @@ set global scrolloff 5,5
 
 # Indent
 set global indentwidth 4
-map global insert <tab> '<a-;><gt>'
-map global insert <s-tab> '<a-;><lt>'
-
-set-face global MarkFace1 rgb:000000,rgb:00FF4D
-set-face global MarkFace2 rgb:000000,rgb:F9D3FA
-set-face global MarkFace3 rgb:000000,rgb:A3B3FF
-set-face global MarkFace4 rgb:000000,rgb:BAF2C0
-set-face global MarkFace5 rgb:000000,rgb:FBAEB2
-set-face global MarkFace6 rgb:000000,rgb:FBFF00
-
-add-highlighter global/ dynregex '%reg{/}' 0:+u
-add-highlighter global/ number-lines -hlcursor
-add-highlighter global/ show-matching
-addhl global/ regex 'TODO|FIXME|XXX|NOTE' 0:+rb
-addhl global/ show-whitespaces -spc ' '
-
+hook global InsertChar \t %{ try %{
+    execute-keys -draft "h<a-h><a-k>\A\h+\z<ret><a-;>;%opt{indentwidth}@"
+}}
+hook global InsertDelete ' ' %{ try %{
+    execute-keys -draft 'h<a-h><a-k>\A\h+\z<ret>i<space><esc><lt>'
+}}
 hook global InsertCompletionShow .* %{
     try %{
         # this command temporarily removes cursors preceded by whitespace;
@@ -49,6 +39,41 @@ hook global InsertCompletionHide .* %{
     unmap window insert <tab> <c-n>
     unmap window insert <s-tab> <c-p>
 }
+
+set-face global MarkFace1 rgb:000000,rgb:00FF4D
+set-face global MarkFace2 rgb:000000,rgb:F9D3FA
+set-face global MarkFace3 rgb:000000,rgb:A3B3FF
+set-face global MarkFace4 rgb:000000,rgb:BAF2C0
+set-face global MarkFace5 rgb:000000,rgb:FBAEB2
+set-face global MarkFace6 rgb:000000,rgb:FBFF00
+
+add-highlighter global/ dynregex '%reg{/}' 0:+u
+add-highlighter global/ number-lines -hlcursor
+add-highlighter global/ show-matching
+addhl global/ regex 'HACK|TODO|FIXME|XXX|NOTE' 0:+rb
+addhl global/ show-whitespaces -spc ' '
+
+hook global WinSetOption filetype=(rust|python|go|javascript|typescript|c|cpp) %{
+    lsp-enable-window
+    lsp-auto-hover-enable
+    lsp-auto-hover-insert-mode-enable
+    lsp-auto-hover-signature-help-enable
+    map window goto r <esc>:lsp-references<ret> -docstring "references to symbol under cursor"
+    map window user k <esc>:lsp-document-symbol<ret> -docstring "Show documentation"
+    map window user p <esc>:lsp-rename-prompt<ret> -docstring "Rename prompt"
+}
+hook global WinCreate .* %{
+    hook window InsertCompletionShow .* %{
+        map window insert <tab> <c-n>
+        map window insert <backtab> <c-p>
+    }
+    hook window InsertCompletionHide .* %{
+        unmap window insert <tab> <c-n>
+        unmap window insert <backtab> <c-p>
+    }
+    declare-user-mode inserts
+    map window user i %{:enter-user-mode inserts<ret>} -docstring %{insert snippets}
+}
 hook global BufOpenFile .* %{
     editorconfig-load
 }
@@ -60,17 +85,16 @@ hook global BufNewFile .* %{
     editorconfig-load 
 }
 hook global WinSetOption filetype=sql %{
-    map window user o %{: grep TODO|FIXME|XXX|NOTE|^INSERT|^UPDATE|^DELETE|^CREATE|^DROP' %val{bufname} -H -i<ret>} -docstring "Show outline"
+    map window user o %{: grep HACK|TODO|FIXME|XXX|NOTE|^INSERT|^UPDATE|^DELETE|^CREATE|^DROP' %val{bufname} -H -i<ret>} -docstring "Show outline"
 }
 hook global WinSetOption filetype=typescript %{
     set window indentwidth 2
-    map window user o %{: grep TODO|FIXME|XXX|NOTE|^function|^export|^enum|^static|^require|^import|^package|^const|^class|^interface|^import|^type %val{bufname} -H<ret>} -docstring "Show outline"
+    map window user o %{: grep HACK|TODO|FIXME|XXX|NOTE|^function|^export|^enum|^static|^require|^import|^package|^const|^class|^interface|^import|^type %val{bufname} -H<ret>} -docstring "Show outline"
     set window lintcmd 'tslint'
     set window formatcmd 'prettier --stdin --parser typescript'
     hook buffer BufWritePre .* %{format}
-    declare-user-mode snippets
-    map window snippets c %{iconsole.log('X', JSON.stringify(X))<esc><a-/>X<ret><a-n>c} -docstring %{console.log}
-    map window user i %{:enter-user-mode snippets<ret>} -docstring %{insert snippets}
+
+    map window inserts c %{iconsole.log('X', JSON.stringify(X))<esc><a-/>X<ret><a-n>c} -docstring %{console.log}
 }
 hook global WinSetOption filetype=css %{
     set window indentwidth 2
@@ -79,14 +103,17 @@ hook global WinSetOption filetype=css %{
 }
 hook global WinSetOption filetype=json %{
     set window indentwidth 2
-    set window formatcmd 'prettier --stdin --parser json5'
+    set window formatcmd 'prettier --stdin --parser json'
     hook buffer BufWritePre .* %{format}
 }
 hook global WinSetOption filetype=javascript %{
     set window indentwidth 2
     set window lintcmd 'jslint'
-    map window user o %{: grep TODO|FIXME|XXX|NOTE|^function|^const|^class|^interface|^import|^type %val{bufname} -H<ret>} -docstring "Show outline"
-    map window user 
+    map window user o %{: grep HACK|TODO|FIXME|XXX|NOTE|^function|^const|^class|^interface|^import|^type %val{bufname} -H<ret>} -docstring "Show outline"
+    set window formatcmd 'prettier --stdin --parser javascript'
+    hook buffer BufWritePre .* %{format}
+}
+hook global WinSetOption filetype=markdown %{
     set window formatcmd 'prettier --stdin --parser javascript'
     hook buffer BufWritePre .* %{format}
 }
@@ -98,7 +125,7 @@ hook global WinSetOption filetype=go %{
 
     add-highlighter window/ regex 'if err != nil .*?\{.*?\}' 0:comment
 
-    map window user o %{: grep TODO|FIXME|XXX|NOTE|^func|^import|^var|^package|^const|^goto|^struct|^type %val{bufname} -H<ret>} -docstring "Show outline"
+    map window user o %{: grep HACK|TODO|FIXME|XXX|NOTE|^func|^import|^var|^package|^const|^goto|^struct|^type %val{bufname} -H<ret>} -docstring "Show outline"
 }
 hook global BufWritePost .*\.go$ %{
     go-format -use-goimports
@@ -168,18 +195,6 @@ map global user n %{: nnn .<ret>} -docstring "Run nnn file browser"
 colorscheme nofrils-acme
 
 eval %sh{kak-lsp --kakoune --config ~/.config/kak-lsp/kak-lsp.toml -s $kak_session}
-#set global lsp_cmd "kak-lsp --convifg ~/.config/kak-lsp/kak-lsp.toml -s %val{session} -vvv --log /tmp/kak-lsp.log"
-#eval %sh{kak-lsp --kakoune -s $kak_session}
-hook global WinSetOption filetype=(rust|python|go|javascript|typescript|c|cpp) %{
-    lsp-enable-window
-    lsp-auto-hover-enable
-    lsp-auto-hover-insert-mode-enable
-    lsp-auto-hover-signature-help-enable
-    map window user d <esc>:lsp-definition<ret> -docstring "Jump to definition"
-    map window goto r <esc>:lsp-references<ret> -docstring "references to symbol under cursor"
-    map window user k <esc>:lsp-document-symbol<ret> -docstring "Show documentation"
-    map window user h <esc>:lsp-hover<ret> -docstring "Show documentation"
-}
 
 try %{ source ~/.kakrc.local } # system local
 try %{ source .kakrc.local } # project local
