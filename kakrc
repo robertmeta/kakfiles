@@ -61,17 +61,17 @@ hook global WinSetOption filetype=(rust|python|go|javascript|typescript|c|cpp) %
     map window goto r <esc>:lsp-references<ret> -docstring "references to symbol under cursor"
     map window user k <esc>:lsp-document-symbol<ret> -docstring "Show documentation"
     map window user p <esc>:lsp-rename-prompt<ret> -docstring "Rename prompt"
+    map window user o %{: grep HACK|TODO|FIXME|XXX|NOTE|^\w+ %val{bufname} -H<ret>} -docstring "Show outline"
 }
 hook global WinCreate .* %{
     hook window InsertCompletionShow .* %{
         map window insert <tab> <c-n>
-        map window insert <backtab> <c-p>
+        map window insert <s-tab> <c-p>
     }
     hook window InsertCompletionHide .* %{
         unmap window insert <tab> <c-n>
-        unmap window insert <backtab> <c-p>
+        unmap window insert <s-tab> <c-p>
     }
-    declare-user-mode inserts
     map window user i %{:enter-user-mode inserts<ret>} -docstring %{insert snippets}
 }
 hook global BufOpenFile .* %{
@@ -184,13 +184,35 @@ map global user m %{: mark-word<ret>} -docstring "Mark word with highlight"
 map global user t %{: connect-terminal<ret>} -docstring "Start connected terminal"
 map global user r %{: nop %sh{tmux send-keys -t {bottom-right} Up Enter }<ret>} -docstring "Rerun in bottom-right"
 map global user R %{: %sh{tmux send-keys -t {bottom-right} C-c C-c C-c Up Enter }<ret>} -docstring "Cancel and rerun in bottom-right"
-map global user l %{: grep '' %val{bufname} -H<left><left><left><left><left><left><left><left><left><left><left><left><left><left><left><left><left><left>} -docstring "Local grep"
-map global user g %{<A-i>w"gy<esc>: grep <C-r>g<ret>: try %{delete-buffer *grep*:<C-r>g}<ret> : try %{rename-buffer *grep*:<C-r>g}<ret> : try %{mark-pattern set <C-r>g}<ret>} -docstring "Grep for word under cursor, persist results"
 map global user e %{: expand<ret>} -docstring "Expand selection"
 map global user S %{: enter-user-mode split-object<ret>} -docstring "Split by object"
-map global user b %{: tmux-terminal-window tig blame -- %val{buffile}<ret>} -docstring "Blame for current file"
-map global user s %{: tmux-terminal-window tig status<ret>} -docstring "Git status (for committing)"
 map global user n %{: nnn .<ret>} -docstring "Run nnn file browser"
+
+map global user -docstring "Enable search keymap mode for next key" s ": enter-user-mode<space>search<ret>"
+declare-user-mode search
+map global search l %{: grep '' %val{bufname} -H<left><left><left><left><left><left><left><left><left><left><left><left><left><left><left><left><left><left>} -docstring "Local grep"
+map global search g %{<A-i>w"gy<esc>: grep <C-r>g<ret>: try %{delete-buffer *grep*:<C-r>g}<ret> : try %{rename-buffer *grep*:<C-r>g}<ret> : try %{mark-pattern set <C-r>g}<ret>} -docstring "Grep for word under cursor, persist results"
+map global search s %{<A-i>w"gy<esc>: grep <C-r>g<ret>: try %{delete-buffer *grep*:<C-r>g}<ret> : try %{rename-buffer *grep*:<C-r>g}<ret> : try %{mark-pattern set <C-r>g}<ret>} -docstring "Grep for word under cursor, persist results"
+
+map global user -docstring "Enable Insert keymap mode for next key" i ": enter-user-mode<space>inserts<ret>"
+declare-user-mode inserts
+map global inserts -docstring "TODO" t %{iTODO(rrm): } 
+map global inserts -docstring "TODO" i %{iTODO(rrm): } 
+map global inserts -docstring "Name" n %{iRobert R Melton}
+map global inserts -docstring "Date" d %{!date<ret>}
+
+map global user -docstring "Enable Git keymap mode for next key" g ": enter-user-mode<space>git<ret>"
+declare-user-mode git
+map global git -docstring "commit - Record changes to the repository" c ": git commit<ret>"
+map global git -docstring "blame - Show what revision and author last modified each line of the current file" b ': repl "tig blame -C +%val{cursor_line} -- %val{buffile}"<ret>'
+map global git -docstring "diff - Show changes between HEAD and working tree" d ": git diff<ret>"
+map global git -docstring "git - Explore the repository history" g ": repl tig<ret>"
+map global git -docstring "log - Show commit logs for the current file" l ': repl "tig log -- %val{buffile}"<ret>'
+map global git -docstring "push - push to the current branch" p ": git push"
+map global git -docstring "status - Show the working tree status" s ': repl "tig status"<ret>'
+map global git -docstring "status - Show the working tree status" g ': repl "tig status"<ret>'
+map global git -docstring "staged - Show staged changes" t ": git diff --staged<ret>"
+map global git -docstring "write - Write and stage the current file" w ": write<ret>: git add<ret>: git update-diff<ret>"
 
 colorscheme nofrils-acme
 
