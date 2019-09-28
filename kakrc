@@ -59,10 +59,8 @@ hook global WinSetOption filetype=(rust|python|go|javascript|typescript|c|cpp) %
     lsp-auto-hover-enable
     lsp-auto-hover-insert-mode-enable
     lsp-auto-hover-signature-help-enable
-    map window goto r <esc>:lsp-references<ret> -docstring "references to symbol under cursor"
-    map window user k <esc>:lsp-document-symbol<ret> -docstring "Show documentation"
-    map window user p <esc>:lsp-rename-prompt<ret> -docstring "Rename prompt"
     map window user o %{: grep HACK|TODO|FIXME|XXX|NOTE|^\w+ %val{bufname} -H<ret>} -docstring "Show outline"
+
 }
 hook global WinCreate .* %{
     hook window InsertCompletionShow .* %{
@@ -73,7 +71,6 @@ hook global WinCreate .* %{
         unmap window insert <tab> <c-n>
         unmap window insert <s-tab> <c-p>
     }
-    map window user i %{:enter-user-mode inserts<ret>} -docstring %{insert snippets}
 }
 hook global BufOpenFile .* %{
     editorconfig-load
@@ -175,7 +172,6 @@ map global normal <down> %{: grep-next-match<ret>} -docstring "Next grep match"
 map global normal <left> %{: buffer-previous<ret>} -docstring "Prev buffer"
 map global normal <right> %{: buffer-next<ret>} -docstring "Next buffer"
 map global normal <up> %{: grep-previous-match<ret>} -docstring "Prev grep match"
-map global normal <a-I> ': enter-user-mode split-object<ret>'
 map global object h 'c<gt>,<lt><ret>' -docstring "select in the (h)tml angle brackets"
 map global object b 'c\s,\s<ret>' -docstring "select (b)etween whitespace"
 map global user <a-w> ':toggle-highlighter wrap -word<ret>' -docstring "toggle wordwrap"
@@ -186,7 +182,7 @@ map global user t %{: connect-terminal<ret>} -docstring "Start connected termina
 map global user r %{: nop %sh{tmux send-keys -t {bottom-right} Up Enter }<ret>} -docstring "Rerun in bottom-right"
 map global user R %{: %sh{tmux send-keys -t {bottom-right} C-c C-c C-c Up Enter }<ret>} -docstring "Cancel and rerun in bottom-right"
 map global user e %{: expand<ret>} -docstring "Expand selection"
-map global user S %{: enter-user-mode split-object<ret>} -docstring "Split by object"
+map global user o %{: enter-user-mode split-object<ret>} -docstring "Enable split object keymap mode for next key"
 map global user n %{: nnn .<ret>} -docstring "Run nnn file browser"
 
 map global user -docstring "Enable search keymap mode for next key" s ": enter-user-mode<space>search<ret>"
@@ -224,6 +220,8 @@ map global anchor f '<esc><a-;>'      -docstring 'flip cursor and anchor'
 map global anchor h '<esc><a-:><a-;>' -docstring 'ensure anchor after cursor'
 map global anchor l '<esc><a-:>'      -docstring 'ensure cursor after anchor'
 map global anchor s '<esc><a-S>'      -docstring 'split at cursor and anchor'
+
+map global user -docstring "Enable lsp keymap mode for next key" l ": enter-user-mode<space>lsp<ret>"
 
 colorscheme nofrils-acme
 
