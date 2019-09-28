@@ -1,5 +1,6 @@
 # This expects a few things
 #
+#
 # - rg for searching (ripgrep power!)
 # - ctags for well tags (https://github.com/universal-ctags/ctags)
 # - gocode for code completion (https://github.com/nsf/gocode)
@@ -206,12 +207,12 @@ map global inserts -docstring "Date" d %{!date<ret>}
 map global user -docstring "Enable Git keymap mode for next key" g ": enter-user-mode<space>git<ret>"
 declare-user-mode git
 map global git -docstring "commit - Record changes to the repository" c ": git commit<ret>"
-map global git -docstring "blame - Show what revision and author last modified each line of the current file" b ': repl "tig blame -C +%val{cursor_line} -- %val{buffile}"<ret>'
+map global git -docstring "blame - Show what revision and author last modified each line of the current file" b ': connect "tig blame -C +%val{cursor_line} -- %val{buffile}"<ret>'
 map global git -docstring "diff - Show changes between HEAD and working tree" d ": git diff<ret>"
-map global git -docstring "git - Explore the repository history" g ": repl tig<ret>"
-map global git -docstring "log - Show commit logs for the current file" l ': repl "tig log -- %val{buffile}"<ret>'
-map global git -docstring "status - Show the working tree status" s ': repl "tig status"<ret>'
-map global git -docstring "status - Show the working tree status" g ': repl "tig status"<ret>'
+map global git -docstring "git - Explore the repository history" g ": connect tig<ret>"
+map global git -docstring "log - Show commit logs for the current file" l ': connect "tig log -- %val{buffile}"<ret>'
+map global git -docstring "status - Show the working tree status" s ': connect "tig status"<ret>'
+map global git -docstring "status - Show the working tree status" g ': connect "tig status"<ret>'
 map global git -docstring "staged - Show staged changes" t ": git diff --staged<ret>"
 map global git -docstring "write - Write and stage the current file" w ": write<ret>: git add<ret>: git update-diff<ret>"
 
