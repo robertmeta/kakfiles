@@ -193,6 +193,8 @@ declare-user-mode search
 map global search l %{: grep '' %val{bufname} -H<left><left><left><left><left><left><left><left><left><left><left><left><left><left><left><left><left><left>} -docstring "Local grep"
 map global search g %{<A-i>w"gy<esc>: grep <C-r>g<ret>: try %{delete-buffer *grep*:<C-r>g}<ret> : try %{rename-buffer *grep*:<C-r>g}<ret> : try %{mark-pattern set <C-r>g}<ret>} -docstring "Grep for word under cursor, persist results"
 map global search s %{<A-i>w"gy<esc>: grep <C-r>g<ret>: try %{delete-buffer *grep*:<C-r>g}<ret> : try %{rename-buffer *grep*:<C-r>g}<ret> : try %{mark-pattern set <C-r>g}<ret>} -docstring "Grep for word under cursor, persist results"
+map global search / ': exec /<ret>\Q\E<left><left>' -docstring 'regex disabled'
+map global search i '/(?i)'                         -docstring 'case insensitive'
 
 map global user -docstring "Enable Insert keymap mode for next key" i ": enter-user-mode<space>inserts<ret>"
 declare-user-mode inserts
@@ -212,6 +214,15 @@ map global git -docstring "status - Show the working tree status" s ': repl "tig
 map global git -docstring "status - Show the working tree status" g ': repl "tig status"<ret>'
 map global git -docstring "staged - Show staged changes" t ": git diff --staged<ret>"
 map global git -docstring "write - Write and stage the current file" w ": write<ret>: git add<ret>: git update-diff<ret>"
+
+map global user -docstring "Enable anchor keymap mode for next key" a ": enter-user-mode<space>anchor<ret>"
+declare-user-mode anchor
+map global anchor a '<esc><a-;>;'     -docstring 'reduce to anchor'
+map global anchor c '<esc>;'          -docstring 'reduce to cursor'
+map global anchor f '<esc><a-;>'      -docstring 'flip cursor and anchor'
+map global anchor h '<esc><a-:><a-;>' -docstring 'ensure anchor after cursor'
+map global anchor l '<esc><a-:>'      -docstring 'ensure cursor after anchor'
+map global anchor s '<esc><a-S>'      -docstring 'split at cursor and anchor'
 
 colorscheme nofrils-acme
 
