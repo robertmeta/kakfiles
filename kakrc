@@ -208,7 +208,6 @@ map global git -docstring "blame - Show what revision and author last modified e
 map global git -docstring "diff - Show changes between HEAD and working tree" d ": git diff<ret>"
 map global git -docstring "git - Explore the repository history" g ": repl tig<ret>"
 map global git -docstring "log - Show commit logs for the current file" l ': repl "tig log -- %val{buffile}"<ret>'
-map global git -docstring "push - push to the current branch" p ": git push"
 map global git -docstring "status - Show the working tree status" s ': repl "tig status"<ret>'
 map global git -docstring "status - Show the working tree status" g ': repl "tig status"<ret>'
 map global git -docstring "staged - Show staged changes" t ": git diff --staged<ret>"
