@@ -14,7 +14,12 @@ eval %sh{
         fi
     done
 }
-set global ui_options ncurses_assistant=none ncurses_enable_mouse=true ncurses_set_title=false ncurses_wheel_down_button=0
+evaluate-commands %sh{
+    case $(uname) in
+        Linux) printf "set global ui_options ncurses_assistant=none ncurses_enable_mouse=true ncurses_set_title=false ncurses_wheel_down_button=0"
+        Darwin) printf "set global ui_options ncurses_assistant=none ncurses_enable_mouse=true ncurses_set_title=false ncurses_wheel_down_button=5"
+    esac
+}
 set global scrolloff 5,5
 
 # Indent
@@ -134,6 +139,37 @@ hook global BufWritePre .* %{ evaluate-commands %sh{
     mkdir --parents "$container"
 }}
 
+
+define-command github-url \
+    -docstring "github-url: copy the canonical GitHub URL to the system clipboard" \
+    %{ evaluate-commands %sh{
+        # use the remote configured for fetching
+        fetch_remote=$(git config --get "branch.$(git symbolic-ref --short HEAD).remote" || printf origin)
+        base_url=$(git remote get-url "$fetch_remote" | sed -e "s|^git@github.com:|https://github.com/|")
+        # assume the master branch; this is what I want 95% of the time
+        master_commit=$(git ls-remote "$fetch_remote" master | awk '{ print $1 }')
+        relative_path=$(git ls-files --full-name "$kak_bufname")
+        selection_start="${kak_selection_desc%,*}"
+        selection_end="${kak_selection_desc##*,}"
+
+        if [ "$selection_start" == "$selection_end" ]; then
+            github_url=$(printf "%s/blob/%s/%s" "${base_url%.git}" "$master_commit" "$relative_path")
+        else
+            start_line="${selection_start%\.*}"
+            end_line="${selection_end%\.*}"
+
+            # highlight the currently selected line(s)
+            if [ "$start_line" == "$end_line" ]; then
+                github_url=$(printf "%s/blob/%s/%s#L%s" "${base_url%.git}" "$master_commit" "$relative_path" "${start_line}")
+            else
+                github_url=$(printf "%s/blob/%s/%s#L%s-L%s" "${base_url%.git}" "$master_commit" "$relative_path" "${start_line}" "${end_line}")
+            fi
+        fi
+        printf "echo -debug %s\n" "$github_url"
+        printf "execute-keys -draft '!printf %s $github_url | $kak_opt_system_clipboard_copy<ret>'\n"
+        printf "echo -markup %%{{Information}copied canonical GitHub URL to system clipboard}\n"
+    }
+}
 def nnn -params .. -file-completion %(connect nnn %arg(@)) -docstring "Open with nnn"
 def findit -params 1 -shell-script-candidates %{ rg --files } %{ edit %arg{1} } -docstring "Uses rg to find file"
 def git-edit -params 1 -shell-script-candidates %{ git ls-files } %{ edit %arg{1} } -docstring "Uses git ls-files to find files"
@@ -207,6 +243,7 @@ map global git -docstring "commit - Record changes to the repository" c ": git c
 map global git -docstring "blame - Show what revision and author last modified each line of the current file" b ': connect "tig blame -C +%val{cursor_line} -- %val{buffile}"<ret>'
 map global git -docstring "diff - Show changes between HEAD and working tree" d ": git diff<ret>"
 map global git -docstring "git - Explore the repository history" g ": repl tig<ret>"
+map global git -docstring "github - Copy canonical GitHub URL to system clipboard" h ": github-url<ret>"
 map global git -docstring "log - Show commit logs for the current file" l ': repl "tig log -- %val{buffile}"<ret>'
 map global git -docstring "status - Show the working tree status" s ': repl "tig status"<ret>'
 map global git -docstring "status - Show the working tree status" G ': repl "tig status"<ret>'
@@ -229,6 +266,27 @@ map global anchor f '<esc><a-;>'      -docstring 'flip cursor and anchor'
 map global anchor h '<esc><a-:><a-;>' -docstring 'ensure anchor after cursor'
 map global anchor l '<esc><a-:>'      -docstring 'ensure cursor after anchor'
 map global anchor s '<esc><a-S>'      -docstring 'split at cursor and anchor'
+
+map global user -docstring "Enable clipboard keymap mode for next key" C ": enter-user-mode<space>clipboard<ret>"
+declare-user-mode clipboard
+declare-option -hidden str system_clipboard_copy ""
+declare-option -hidden str system_clipboard_paste ""
+evaluate-commands %sh{
+    case $(uname) in
+        Linux) copy="xclip -i"; paste="xclip -o" ;;
+        Darwin) copy="pbcopy"; paste="pbpaste" ;;
+    esac
+
+    printf "map global clipboard -docstring 'Paste (after) from system clipboard' p '!%s<ret>'\n" "$paste"
+    printf "map global clipboard -docstring 'Paste (before) from system clipboard' P '<a-!>%s<ret>'\n" "$paste"
+    printf "map global clipboard -docstring 'Replace from system clipboard' R '|%s<ret>'\n" "$paste"
+    printf "map global clipboard -docstring 'Yank to system clipboard' y '<a-|>%s<ret>: echo -markup %%{{Information}copied selection to system clipboard}<ret>'\n" "$copy"
+    printf "map global clipboard -docstring 'Yank to system clipboard' C '<a-|>%s<ret>: echo -markup %%{{Information}copied selection to system clipboard}<ret>'\n" "$copy"
+    printf "map global clipboard -docstring 'Yank to system clipboard' c '<a-|>%s<ret>: echo -markup %%{{Information}copied selection to system clipboard}<ret>'\n" "$copy"
+
+    printf "set-option global system_clipboard_copy '%s'\n" "$copy"
+    printf "set-option global system_clipboard_paste '%s'\n" "$paste"
+}
 
 map global user -docstring "Enable lsp keymap mode for next key" l ": enter-user-mode<space>lsp<ret>"
 
