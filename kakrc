@@ -188,7 +188,7 @@ map global user e %{: expand<ret>} -docstring "Expand selection"
 map global user S %{: enter-user-mode split-object<ret>} -docstring "Split by object"
 map global user n %{: nnn .<ret>} -docstring "Run nnn file browser"
 
-map global user -docstring "Enable search keymap mode for next key" s ": enter-user-mode<space>search<ret>"
+map global user -docstring "Enable grep keymap mode for next key" g ": enter-user-mode<space>search<ret>"
 declare-user-mode search
 map global search l %{: grep '' %val{bufname} -H<left><left><left><left><left><left><left><left><left><left><left><left><left><left><left><left><left><left>} -docstring "Local grep"
 map global search g %{<A-i>w"gy<esc>: grep <C-r>g<ret>: try %{delete-buffer *grep*:<C-r>g}<ret> : try %{rename-buffer *grep*:<C-r>g}<ret> : try %{mark-pattern set <C-r>g}<ret>} -docstring "Grep for word under cursor, persist results"
@@ -196,12 +196,12 @@ map global search s %{<A-i>w"gy<esc>: grep <C-r>g<ret>: try %{delete-buffer *gre
 
 map global user -docstring "Enable Insert keymap mode for next key" i ": enter-user-mode<space>inserts<ret>"
 declare-user-mode inserts
-map global inserts -docstring "TODO" t %{iTODO(rrm): } 
 map global inserts -docstring "TODO" i %{iTODO(rrm): } 
+map global inserts -docstring "TODO" t %{iTODO(rrm): } 
 map global inserts -docstring "Name" n %{iRobert R Melton}
 map global inserts -docstring "Date" d %{!date<ret>}
 
-map global user -docstring "Enable Git keymap mode for next key" g ": enter-user-mode<space>git<ret>"
+map global user -docstring "Enable Git keymap mode for next key" G ": enter-user-mode<space>git<ret>"
 declare-user-mode git
 map global git -docstring "commit - Record changes to the repository" c ": git commit<ret>"
 map global git -docstring "blame - Show what revision and author last modified each line of the current file" b ': repl "tig blame -C +%val{cursor_line} -- %val{buffile}"<ret>'
@@ -210,10 +210,17 @@ map global git -docstring "git - Explore the repository history" g ": repl tig<r
 map global git -docstring "log - Show commit logs for the current file" l ': repl "tig log -- %val{buffile}"<ret>'
 map global git -docstring "status - Show the working tree status" s ': repl "tig status"<ret>'
 map global git -docstring "status - Show the working tree status" g ': repl "tig status"<ret>'
+map global git -docstring "status - Show the working tree status" G ': repl "tig status"<ret>'
 map global git -docstring "staged - Show staged changes" t ": git diff --staged<ret>"
 map global git -docstring "write - Write and stage the current file" w ": write<ret>: git add<ret>: git update-diff<ret>"
 
-colorscheme nofrils-acme
+map global user -docstring "Enable spell keymap mode for next key" s ": enter-user-mode<space>search<ret>"
+declare-user-mode spell
+map global spell s ': spell<ret>' -docstring 'Check Spelling'
+map global spell f ': spell-next<ret>_: enter-user-mode spell<ret>' -docstring 'next'
+map global spell l ': spell-replace<ret><ret> : enter-user-mode spell<ret>' -docstring 'lucky fix'
+map global spell a ': spell-replace<ret>' -docstring 'manual fix'
+map global spell c ': spell-clear<ret>' -docstring 'clear'nofrils-acme
 
 eval %sh{kak-lsp --kakoune --config ~/.config/kak-lsp/kak-lsp.toml -s $kak_session}
 
