@@ -219,8 +219,8 @@ map global user t %{: connect-terminal<ret>} -docstring "Start connected termina
 map global user r %{: nop %sh{tmux send-keys -t {bottom-right} Up Enter }<ret>} -docstring "Rerun in bottom-right"
 map global user R %{: %sh{tmux send-keys -t {bottom-right} C-c C-c C-c Up Enter }<ret>} -docstring "Cancel and rerun in bottom-right"
 map global user e %{: expand<ret>} -docstring "Expand selection"
-map global user o %{: enter-user-mode split-object<ret>} -docstring "Enable split object keymap mode for next key"
 map global user n %{: nnn .<ret>} -docstring "Run nnn file browser"
+map global user z %{: nop %sh{tmux resize-pane -Z}<ret>} -docstring "Zoom window"
 
 map global user -docstring "Enable grep keymap mode for next key" g ": enter-user-mode<space>grep<ret>"
 declare-user-mode grep
@@ -246,7 +246,7 @@ map global git -docstring "git - Explore the repository history" g ": repl tig<r
 map global git -docstring "github - Copy canonical GitHub URL to system clipboard" h ": github-url<ret>"
 map global git -docstring "log - Show commit logs for the current file" l ': repl "tig log -- %val{buffile}"<ret>'
 map global git -docstring "status - Show the working tree status" s ': repl "tig status"<ret>'
-map global git -docstring "status - Show the working tree status" G ': repl "tig status"<ret>'
+map global git -docstring "status - Show the working tree status" G ': repl "tig status"<ret>,z'
 map global git -docstring "staged - Show staged changes" t ": git diff --staged<ret>"
 map global git -docstring "write - Write and stage the current file" w ": write<ret>: git add<ret>: git update-diff<ret>"
 
@@ -289,6 +289,7 @@ evaluate-commands %sh{
 }
 
 map global user -docstring "Enable lsp keymap mode for next key" l ": enter-user-mode<space>lsp<ret>"
+map global user o %{: enter-user-mode split-object<ret>} -docstring "Enable split object keymap mode for next key"
 
 colorscheme nofrils-acme
 
