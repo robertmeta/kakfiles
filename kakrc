@@ -113,7 +113,7 @@ hook global WinSetOption filetype=javascript %{
     set window indentwidth 2
     set window lintcmd 'jslint'
     map window user o %{: grep HACK|TODO|FIXME|XXX|NOTE|^function|^const|^class|^interface|^import|^type %val{bufname} -H<ret>} -docstring "Show outline"
-    set window formatcmd 'prettier --stdin --parser javascript'
+    set window formatcmd 'prettier --stdin --parser flow'
     hook buffer BufWritePre .* %{format}
 }
 hook global WinSetOption filetype=markdown %{
