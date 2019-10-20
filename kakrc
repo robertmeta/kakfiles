@@ -99,6 +99,11 @@ hook global WinSetOption filetype=css %{
     set window formatcmd 'prettier --stdin --parser css'
     hook buffer BufWritePre .* %{format}
 }
+hook global WinSetOption filetype=html %{
+    set window indentwidth 2
+    set window formatcmd 'prettier --stdin --parser html'
+    hook buffer BufWritePre .* %{format}
+}
 hook global WinSetOption filetype=json %{
     set window indentwidth 2
     set window formatcmd 'prettier --stdin --parser json'
