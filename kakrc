@@ -14,7 +14,12 @@ eval %sh{
         fi
     done
 }
-set global ui_options ncurses_assistant=none ncurses_enable_mouse=true ncurses_set_title=false ncurses_wheel_down_button=0
+evaluate-commands %sh{
+    case $(uname) in
+        Linux) printf "set global ui_options ncurses_assistant=none ncurses_enable_mouse=true ncurses_set_title=false ncurses_wheel_down_button=0"
+        Darwin) printf "set global ui_options ncurses_assistant=none ncurses_enable_mouse=true ncurses_set_title=false ncurses_wheel_down_button=5"
+    esac
+}
 set global scrolloff 5,5
 
 # Indent
@@ -113,7 +118,7 @@ hook global WinSetOption filetype=javascript %{
     set window indentwidth 2
     set window lintcmd 'jslint'
     map window user o %{: grep HACK|TODO|FIXME|XXX|NOTE|^function|^const|^class|^interface|^import|^type %val{bufname} -H<ret>} -docstring "Show outline"
-    set window formatcmd 'prettier --stdin --parser javascript'
+    set window formatcmd 'prettier --stdin --parser flow'
     hook buffer BufWritePre .* %{format}
 }
 hook global WinSetOption filetype=markdown %{
@@ -139,6 +144,37 @@ hook global BufWritePre .* %{ evaluate-commands %sh{
     mkdir --parents "$container"
 }}
 
+
+define-command github-url \
+    -docstring "github-url: copy the canonical GitHub URL to the system clipboard" \
+    %{ evaluate-commands %sh{
+        # use the remote configured for fetching
+        fetch_remote=$(git config --get "branch.$(git symbolic-ref --short HEAD).remote" || printf origin)
+        base_url=$(git remote get-url "$fetch_remote" | sed -e "s|^git@github.com:|https://github.com/|")
+        # assume the master branch; this is what I want 95% of the time
+        master_commit=$(git ls-remote "$fetch_remote" master | awk '{ print $1 }')
+        relative_path=$(git ls-files --full-name "$kak_bufname")
+        selection_start="${kak_selection_desc%,*}"
+        selection_end="${kak_selection_desc##*,}"
+
+        if [ "$selection_start" == "$selection_end" ]; then
+            github_url=$(printf "%s/blob/%s/%s" "${base_url%.git}" "$master_commit" "$relative_path")
+        else
+            start_line="${selection_start%\.*}"
+            end_line="${selection_end%\.*}"
+
+            # highlight the currently selected line(s)
+            if [ "$start_line" == "$end_line" ]; then
+                github_url=$(printf "%s/blob/%s/%s#L%s" "${base_url%.git}" "$master_commit" "$relative_path" "${start_line}")
+            else
+                github_url=$(printf "%s/blob/%s/%s#L%s-L%s" "${base_url%.git}" "$master_commit" "$relative_path" "${start_line}" "${end_line}")
+            fi
+        fi
+        printf "echo -debug %s\n" "$github_url"
+        printf "execute-keys -draft '!printf %s $github_url | $kak_opt_system_clipboard_copy<ret>'\n"
+        printf "echo -markup %%{{Information}copied canonical GitHub URL to system clipboard}\n"
+    }
+}
 def nnn -params .. -file-completion %(connect nnn %arg(@)) -docstring "Open with nnn"
 def findit -params 1 -shell-script-candidates %{ rg --files } %{ edit %arg{1} } -docstring "Uses rg to find file"
 def git-edit -params 1 -shell-script-candidates %{ git ls-files } %{ edit %arg{1} } -docstring "Uses git ls-files to find files"
@@ -180,6 +216,7 @@ map global normal <up> %{: grep-previous-match<ret>} -docstring "Prev grep match
 map global object h 'c<gt>,<lt><ret>' -docstring "select in the (h)tml angle brackets"
 map global object b 'c\s,\s<ret>' -docstring "select (b)etween whitespace"
 map global user <a-w> ':toggle-highlighter wrap -word<ret>' -docstring "toggle wordwrap"
+map global user b %{:b<space>} -docstring "Buffer select"
 map global user c %{: comment-line<ret>} -docstring "Comment or uncomment selected lines"
 map global user M %{: mark-clear<ret>} -docstring "Remove word marking"
 map global user m %{: mark-word<ret>} -docstring "Mark word with highlight"
@@ -187,35 +224,44 @@ map global user t %{: connect-terminal<ret>} -docstring "Start connected termina
 map global user r %{: nop %sh{tmux send-keys -t {bottom-right} Up Enter }<ret>} -docstring "Rerun in bottom-right"
 map global user R %{: %sh{tmux send-keys -t {bottom-right} C-c C-c C-c Up Enter }<ret>} -docstring "Cancel and rerun in bottom-right"
 map global user e %{: expand<ret>} -docstring "Expand selection"
-map global user o %{: enter-user-mode split-object<ret>} -docstring "Enable split object keymap mode for next key"
 map global user n %{: nnn .<ret>} -docstring "Run nnn file browser"
+map global user z %{: nop %sh{tmux resize-pane -Z}<ret>} -docstring "Zoom window"
 
-map global user -docstring "Enable search keymap mode for next key" s ": enter-user-mode<space>search<ret>"
-declare-user-mode search
-map global search l %{: grep '' %val{bufname} -H<left><left><left><left><left><left><left><left><left><left><left><left><left><left><left><left><left><left>} -docstring "Local grep"
-map global search g %{<A-i>w"gy<esc>: grep <C-r>g<ret>: try %{delete-buffer *grep*:<C-r>g}<ret> : try %{rename-buffer *grep*:<C-r>g}<ret> : try %{mark-pattern set <C-r>g}<ret>} -docstring "Grep for word under cursor, persist results"
-map global search s %{<A-i>w"gy<esc>: grep <C-r>g<ret>: try %{delete-buffer *grep*:<C-r>g}<ret> : try %{rename-buffer *grep*:<C-r>g}<ret> : try %{mark-pattern set <C-r>g}<ret>} -docstring "Grep for word under cursor, persist results"
-map global search / ': exec /<ret>\Q\E<left><left>' -docstring 'regex disabled'
-map global search i '/(?i)'                         -docstring 'case insensitive'
+map global user -docstring "Enable grep keymap mode for next key" g ": enter-user-mode<space>grep<ret>"
+declare-user-mode grep
+map global grep l %{: grep '' %val{bufname} -H<left><left><left><left><left><left><left><left><left><left><left><left><left><left><left><left><left><left>} -docstring "Local grep"
+map global grep g %{<A-i>w"gy<esc>: grep <C-r>g<ret>: try %{delete-buffer *grep*:<C-r>g}<ret> : try %{rename-buffer *grep*:<C-r>g}<ret> : try %{mark-pattern set <C-r>g}<ret>} -docstring "Grep for word under cursor, persist results"
+map global grep s %{<A-i>w"gy<esc>: grep <C-r>g<ret>: try %{delete-buffer *grep*:<C-r>g}<ret> : try %{rename-buffer *grep*:<C-r>g}<ret> : try %{mark-pattern set <C-r>g}<ret>} -docstring "Grep for word under cursor, persist results"
+map global grep / ': exec /<ret>\Q\E<left><left>' -docstring 'regex disabled'
+map global grep i '/(?i)'                         -docstring 'case insensitive'
 
 map global user -docstring "Enable Insert keymap mode for next key" i ": enter-user-mode<space>inserts<ret>"
 declare-user-mode inserts
-map global inserts -docstring "TODO" t %{iTODO(rrm): } 
 map global inserts -docstring "TODO" i %{iTODO(rrm): } 
+map global inserts -docstring "TODO" t %{iTODO(rrm): } 
 map global inserts -docstring "Name" n %{iRobert R Melton}
 map global inserts -docstring "Date" d %{!date<ret>}
 
-map global user -docstring "Enable Git keymap mode for next key" g ": enter-user-mode<space>git<ret>"
+map global user -docstring "Enable Git keymap mode for next key" G ": enter-user-mode<space>git<ret>"
 declare-user-mode git
 map global git -docstring "commit - Record changes to the repository" c ": git commit<ret>"
 map global git -docstring "blame - Show what revision and author last modified each line of the current file" b ': connect "tig blame -C +%val{cursor_line} -- %val{buffile}"<ret>'
 map global git -docstring "diff - Show changes between HEAD and working tree" d ": git diff<ret>"
-map global git -docstring "git - Explore the repository history" g ": connect tig<ret>"
-map global git -docstring "log - Show commit logs for the current file" l ': connect "tig log -- %val{buffile}"<ret>'
-map global git -docstring "status - Show the working tree status" s ': connect "tig status"<ret>'
-map global git -docstring "status - Show the working tree status" g ': connect "tig status"<ret>'
+map global git -docstring "git - Explore the repository history" g ": repl tig<ret>"
+map global git -docstring "github - Copy canonical GitHub URL to system clipboard" h ": github-url<ret>"
+map global git -docstring "log - Show commit logs for the current file" l ': repl "tig log -- %val{buffile}"<ret>'
+map global git -docstring "status - Show the working tree status" s ': repl "tig status"<ret>'
+map global git -docstring "status - Show the working tree status" G ': repl "tig status"<ret>,z'
 map global git -docstring "staged - Show staged changes" t ": git diff --staged<ret>"
 map global git -docstring "write - Write and stage the current file" w ": write<ret>: git add<ret>: git update-diff<ret>"
+
+map global user -docstring "Enable spell keymap mode for next key" s ": enter-user-mode<space>spell<ret>"
+declare-user-mode spell
+map global spell s ': spell<ret>' -docstring 'Check Spelling'
+map global spell f ': spell-next<ret>_: enter-user-mode spell<ret>' -docstring 'next'
+map global spell l ': spell-replace<ret><ret> : enter-user-mode spell<ret>' -docstring 'lucky fix'
+map global spell a ': spell-replace<ret>' -docstring 'manual fix'
+map global spell c ': spell-clear<ret>' -docstring 'clear'
 
 map global user -docstring "Enable anchor keymap mode for next key" a ": enter-user-mode<space>anchor<ret>"
 declare-user-mode anchor
@@ -226,11 +272,34 @@ map global anchor h '<esc><a-:><a-;>' -docstring 'ensure anchor after cursor'
 map global anchor l '<esc><a-:>'      -docstring 'ensure cursor after anchor'
 map global anchor s '<esc><a-S>'      -docstring 'split at cursor and anchor'
 
+map global user -docstring "Enable clipboard keymap mode for next key" C ": enter-user-mode<space>clipboard<ret>"
+declare-user-mode clipboard
+declare-option -hidden str system_clipboard_copy ""
+declare-option -hidden str system_clipboard_paste ""
+evaluate-commands %sh{
+    case $(uname) in
+        Linux) copy="xclip -i"; paste="xclip -o" ;;
+        Darwin) copy="pbcopy"; paste="pbpaste" ;;
+    esac
+
+    printf "map global clipboard -docstring 'Paste (after) from system clipboard' p '!%s<ret>'\n" "$paste"
+    printf "map global clipboard -docstring 'Paste (before) from system clipboard' P '<a-!>%s<ret>'\n" "$paste"
+    printf "map global clipboard -docstring 'Replace from system clipboard' R '|%s<ret>'\n" "$paste"
+    printf "map global clipboard -docstring 'Yank to system clipboard' y '<a-|>%s<ret>: echo -markup %%{{Information}copied selection to system clipboard}<ret>'\n" "$copy"
+    printf "map global clipboard -docstring 'Yank to system clipboard' C '<a-|>%s<ret>: echo -markup %%{{Information}copied selection to system clipboard}<ret>'\n" "$copy"
+    printf "map global clipboard -docstring 'Yank to system clipboard' c '<a-|>%s<ret>: echo -markup %%{{Information}copied selection to system clipboard}<ret>'\n" "$copy"
+
+    printf "set-option global system_clipboard_copy '%s'\n" "$copy"
+    printf "set-option global system_clipboard_paste '%s'\n" "$paste"
+}
+
 map global user -docstring "Enable lsp keymap mode for next key" l ": enter-user-mode<space>lsp<ret>"
+map global user o %{: enter-user-mode split-object<ret>} -docstring "Enable split object keymap mode for next key"
 
 colorscheme nofrils-acme
 
 eval %sh{kak-lsp --kakoune --config ~/.config/kak-lsp/kak-lsp.toml -s $kak_session}
+map global lsp -docstring "Rename the item under cursor" R ": lsp-rename-prompt<ret>"
 
 try %{ source ~/.kakrc.local } # system local
 try %{ source .kakrc.local } # project local
