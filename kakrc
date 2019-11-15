@@ -301,18 +301,5 @@ colorscheme nofrils-acme
 eval %sh{kak-lsp --kakoune --config ~/.config/kak-lsp/kak-lsp.toml -s $kak_session}
 map global lsp -docstring "Rename the item under cursor" R ": lsp-rename-prompt<ret>"
 
-source "~/.config/kak/autoload/fzf.kak/rc/modules/fzf-file.kak"   # fzf file chooser
-source "~/.config/kak/autoload/fzf.kak/rc/modules/fzf-buffer.kak" # switching buffers with fzf
-source "~/.config/kak/autoload/fzf.kak/rc/modules/fzf-search.kak" # search within file contents
-source "~/.config/kak/autoload/fzf.kak/rc/modules/fzf-cd.kak"     # change server's working directory
-source "~/.config/kak/autoload/fzf.kak/rc/modules/fzf-ctags.kak"  # search for tag in your project ctags file
-source "~/.config/kak/autoload/fzf.kak/rc/modules/fzf-vcs.kak" # VCS base module
-# source "~/.config/kak/autoload/fzf.kak/rc/modules/VCS/fzf-bzr.kak" # GNU Bazaar support
-source "~/.config/kak/autoload/fzf.kak/rc/modules/VCS/fzf-git.kak" # Git support module
-# source "~/.config/kak/autoload/fzf.kak/rc/modules/VCS/fzf-hg.kak"  # Mercurial VCS
-# source "~/.config/kak/autoload/fzf.kak/rc/modules/VCS/fzf-svn.kak" # Subversion module
-map global user -docstring "Enable fzf keymap mode for next key" f ": fzf-mode<ret>"
-
-
 try %{ source ~/.kakrc.local } # system local
 try %{ source .kakrc.local } # project local
