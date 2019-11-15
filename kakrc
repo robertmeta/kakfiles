@@ -16,8 +16,8 @@ eval %sh{
 }
 evaluate-commands %sh{
     case $(uname) in
-        Linux) printf "set global ui_options ncurses_assistant=none ncurses_enable_mouse=true ncurses_set_title=false ncurses_wheel_down_button=0"
-        Darwin) printf "set global ui_options ncurses_assistant=none ncurses_enable_mouse=true ncurses_set_title=false ncurses_wheel_down_button=5"
+        Linux) printf "set global ui_options ncurses_assistant=none ncurses_enable_mouse=true ncurses_set_title=false ncurses_wheel_down_button=0" ;;
+        Darwin) printf "set global ui_options ncurses_assistant=none ncurses_enable_mouse=true ncurses_set_title=false ncurses_wheel_down_button=5" ;;
     esac
 }
 set global scrolloff 5,5
@@ -311,7 +311,7 @@ source "~/.config/kak/autoload/fzf.kak/rc/modules/fzf-vcs.kak" # VCS base module
 source "~/.config/kak/autoload/fzf.kak/rc/modules/VCS/fzf-git.kak" # Git support module
 # source "~/.config/kak/autoload/fzf.kak/rc/modules/VCS/fzf-hg.kak"  # Mercurial VCS
 # source "~/.config/kak/autoload/fzf.kak/rc/modules/VCS/fzf-svn.kak" # Subversion module
-map global user -docstring "Enable fzf keymap mode for next key" l ": fzf-mode<ret>"
+map global user -docstring "Enable fzf keymap mode for next key" f ": fzf-mode<ret>"
 
 
 try %{ source ~/.kakrc.local } # system local
