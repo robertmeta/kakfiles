@@ -123,7 +123,7 @@ hook global WinSetOption filetype=javascript %{
 }
 hook global WinSetOption filetype=markdown %{
     set window formatcmd 'prettier --stdin --parser markdown'
-    addhl buffer/ wrap -word -indent -width 100
+    addhl buffer/ wrap -word -indent
     hook buffer BufWritePre .* %{format}
 }
 hook global WinSetOption filetype=go %{
