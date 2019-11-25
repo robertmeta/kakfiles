@@ -79,6 +79,7 @@ hook global WinCreate .* %{
 }
 hook global BufOpenFile .* %{
     editorconfig-load
+    addhl global/ wrap -word -marker '…'
 }
 hook global BufOpenFile .*\.cql$ %{
     set buffer filetype sql
@@ -123,7 +124,6 @@ hook global WinSetOption filetype=javascript %{
 }
 hook global WinSetOption filetype=markdown %{
     set window formatcmd 'prettier --stdin --parser markdown'
-    addhl buffer/ wrap -word -marker '…'
     hook buffer BufWritePre .* %{format}
 }
 hook global WinSetOption filetype=go %{
@@ -273,9 +273,8 @@ map global anchor s '<esc><a-S>'      -docstring 'split at cursor and anchor'
 
 map global user -docstring "Enable option keymap mode for next key" O ": enter-user-mode<space>options<ret>"
 declare-user-mode options
-map global options h ': lsp-auto-hover-enable<ret>: lsp-auto-hover-insert-mode-enable<ret>: lsp-auto-hover-signature-help-enable '     -docstring 'enable hover help'
-map global options H ': lsp-auto-hover-disable<ret>: lsp-auto-hover-insert-mode-disable<ret>: lsp-auto-hover-signature-help-disable '     -docstring 'disable hover help'
-map global options w ': toggle-highlighter wrap -word<ret>' -docstring "toggle wordwrap"
+map global options h ': lsp-auto-hover-enable<ret>: lsp-auto-hover-insert-mode-enable<ret>'     -docstring 'enable hover help'
+map global options H ': lsp-auto-hover-disable<ret>: lsp-auto-hover-insert-mode-disable<ret>'     -docstring 'disable hover help'
 
 map global user -docstring "Enable clipboard keymap mode for next key" C ": enter-user-mode<space>clipboard<ret>"
 declare-user-mode clipboard
