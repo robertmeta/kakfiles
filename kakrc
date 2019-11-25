@@ -57,7 +57,7 @@ add-highlighter global/ dynregex '%reg{/}' 0:+u
 add-highlighter global/ number-lines -hlcursor
 add-highlighter global/ show-matching
 addhl global/ regex 'HACK|TODO|FIXME|XXX|NOTE' 0:+rb
-addhl global/ show-whitespaces -spc ' '
+addhl global/ show-whitespaces -spc ' ' -lf ' ' -nbsp '·'
 
 hook global WinSetOption filetype=(rust|python|go|javascript|typescript|c|cpp) %{
     lsp-enable-window
