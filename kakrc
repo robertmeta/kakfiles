@@ -79,7 +79,7 @@ hook global WinCreate .* %{
 }
 hook global BufOpenFile .* %{
     editorconfig-load
-    addhl global/ wrap -word -marker '…'
+    addhl global/ wrap -word -indent -marker '…'
 }
 hook global BufOpenFile .*\.cql$ %{
     set buffer filetype sql
