@@ -125,6 +125,7 @@ hook global WinSetOption filetype=javascript %{
 hook global WinSetOption filetype=markdown %{
     set window formatcmd 'prettier --stdin --parser markdown'
     hook buffer BufWritePre .* %{format}
+    map window user o %{: grep HACK|TODO|FIXME|XXX|NOTE|^# %val{bufname} -H<ret>} -docstring "Show outline"
 }
 hook global WinSetOption filetype=go %{
     set window indentwidth 0 # 0 means real tab
@@ -225,6 +226,7 @@ map global user R %{: %sh{tmux send-keys -t {bottom-right} C-c C-c C-c Up Enter 
 map global user e %{: expand<ret>} -docstring "Expand selection"
 map global user n %{: nnn .<ret>} -docstring "Run nnn file browser"
 map global user z %{: nop %sh{tmux resize-pane -Z}<ret>} -docstring "Zoom window"
+map global user o %{: grep HACK|TODO|FIXME|XXX|NOTE %val{bufname} -H<ret>} -docstring "Show outline"
 
 map global user -docstring "Enable grep keymap mode for next key" g ": enter-user-mode<space>grep<ret>"
 declare-user-mode grep
@@ -298,7 +300,7 @@ evaluate-commands %sh{
 }
 
 map global user -docstring "Enable lsp keymap mode for next key" l ": enter-user-mode<space>lsp<ret>"
-map global user o %{: enter-user-mode split-object<ret>} -docstring "Enable split object keymap mode for next key"
+map global user S %{: enter-user-mode split-object<ret>} -docstring "Enable split object keymap mode for next key"
 
 colorscheme nofrils-acme
 
