@@ -238,9 +238,10 @@ map global grep i '/(?i)'                         -docstring 'case insensitive'
 
 map global user -docstring "Enable Insert keymap mode for next key" i ": enter-user-mode<space>inserts<ret>"
 declare-user-mode inserts
-map global inserts -docstring "TODO" i %{iTODO(rrm): } 
-map global inserts -docstring "TODO" t %{iTODO(rrm): } 
-map global inserts -docstring "Name" n %{iRobert R Melton}
+
+map global inserts -docstring "TODO" i %{<esc> OTODO(rrm): <esc> :comment-line<ret> }
+map global inserts -docstring "TODO" t %{aTODO(rrm): } 
+map global inserts -docstring "Name" n %{aRobert R Melton}
 map global inserts -docstring "Date" d %{!date<ret>}
 
 map global user -docstring "Enable Git keymap mode for next key" G ": enter-user-mode<space>git<ret>"
