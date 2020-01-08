@@ -85,6 +85,12 @@ hook global BufOpenFile .*\.cql$ %{
     set buffer filetype sql
     set buffer commentline --
 }
+hook global BufOpenFile .*\.scss$ %{
+    set buffer filetype sass
+}
+hook global BufOpenFile .*\.hbs$ %{
+    set buffer filetype handlebars
+}
 hook global BufNewFile .* %{ 
     editorconfig-load 
 }
@@ -105,6 +111,11 @@ hook global WinSetOption filetype=css %{
     set window formatcmd 'prettier --stdin --parser css'
     hook buffer BufWritePre .* %{format}
 }
+hook global WinSetOption filetype=sass %{
+    set window indentwidth 2
+    set window formatcmd 'prettier --stdin --parser css'
+    hook buffer BufWritePre .* %{format}
+}
 hook global WinSetOption filetype=html %{
     set window indentwidth 2
     set window formatcmd 'prettier --stdin --parser html'
@@ -113,6 +124,11 @@ hook global WinSetOption filetype=html %{
 hook global WinSetOption filetype=json %{
     set window indentwidth 2
     set window formatcmd 'prettier --stdin --parser json'
+    hook buffer BufWritePre .* %{format}
+}
+hook global WinSetOption filetype=handlebars %{
+    set window indentwidth 2
+    set window formatcmd 'prettier --stdin --parser glimmer'
     hook buffer BufWritePre .* %{format}
 }
 hook global WinSetOption filetype=javascript %{
