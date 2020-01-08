@@ -8,6 +8,10 @@
 
 [![asciicast](https://asciinema.org/a/234300.svg)](https://asciinema.org/a/234300)
 
+> “Connect is by far my most used plugin, nothing else even comes close.  
+> I use this every single time I use Kakoune.”  
+> — [@robertmeta] – [Connect – Render Markdown with Glow](https://discuss.kakoune.com/t/connect-render-markdown-with-glow/821/2 "2019-12-31")
+
 ## Installation
 
 ### [Pathogen]
@@ -19,7 +23,7 @@ pathogen-infect /home/user/repositories/github.com/alexherbo2/connect.kak
 **Optional** – To install globally:
 
 ``` sh
-ln -s $PWD/rc/commands/edit ~/.local/bin/kak-connect
+ln -s "$PWD/rc/commands/edit" ~/.local/bin/kak-connect
 ```
 
 ## Usage
@@ -52,6 +56,12 @@ From that terminal:
 
 ``` sh
 $ edit example.txt
+```
+
+To render Markdown for the current buffer with [Glow]:
+
+``` sh
+glow $(it) # Equivalent to `get val buffile`
 ```
 
 You can also run the shell commands from Kakoune.
@@ -99,6 +109,7 @@ alias global rofi rofi-files
 - `EDITOR=edit`
 - `[e]dit [files]`: Open files in the client from where `:connect` was executed
 - `[b]uffer [buffers]`: Get buffer list or open buffers in the client from where `:connect` was executed
+- `it`: Get the current buffer (equivalent to `get val buffile`)
 - `get {type} {name}`: Get a [value][Expansions] in the client from where `:connect` was executed
 - `send {commands}`: Send commands in the client from where `:connect` was executed
 
@@ -112,14 +123,16 @@ Thanks to [@occivink] :heart: for his work on the [:terminal] command to abstrac
 
 [Kakoune]: https://kakoune.org
 [Expansions]: https://github.com/mawww/kakoune/blob/master/doc/pages/expansions.asciidoc
-[IRC]: https://webchat.freenode.net?channels=kakoune
+[IRC]: https://webchat.freenode.net/#kakoune
 [IRC Badge]: https://img.shields.io/badge/IRC-%23kakoune-blue.svg
 [Pathogen]: https://github.com/alexherbo2/pathogen.kak
 [@occivink]: https://github.com/occivink
+[@robertmeta]: https://github.com/robertmeta
 [:terminal]: https://github.com/mawww/kakoune/pull/2617
 [ranger]: https://ranger.github.io
 [fzf]: https://github.com/junegunn/fzf
 [fd]: https://github.com/sharkdp/fd
 [Rofi]: https://github.com/davatorium/rofi
+[Glow]: https://github.com/charmbracelet/glow
 [One session for all projects]: https://discuss.kakoune.com/t/one-session-for-all-projects/473
 [Othala]: https://stargate.fandom.com/wiki/Othala_(planet)

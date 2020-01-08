@@ -301,12 +301,17 @@ evaluate-commands %sh{
 }
 
 map global user -docstring "Enable lsp keymap mode for next key" l ": enter-user-mode<space>lsp<ret>"
-map global user S %{: enter-user-mode split-object<ret>} -docstring "Enable split object keymap mode for next key"
 
 colorscheme nofrils-acme
 
 eval %sh{kak-lsp --kakoune --config ~/.config/kak-lsp/kak-lsp.toml -s $kak_session}
 map global lsp -docstring "Rename the item under cursor" R ": lsp-rename-prompt<ret>"
+
+set-option global explore_files_command fzf-files
+set-option global explore_buffers_command fzf-buffers
+
+define-command fzf-files -params .. -file-completion %(connect edit $(fd --type file . %arg(@) | fzf))
+define-command fzf-buffers %(connect buffer $(buffer | fzf))
 
 try %{ source ~/.kakrc.local } # system local
 try %{ source .kakrc.local } # project local
