@@ -193,6 +193,7 @@ define-command github-url \
     }
 }
 def nnn -params .. -file-completion %(connect nnn %arg(@)) -docstring "Open with nnn"
+def broot -params .. -file-completion %(connect broot %arg(@)) -docstring "Open with broot"
 def findit -params 1 -shell-script-candidates %{ rg --files } %{ edit %arg{1} } -docstring "Uses rg to find file"
 def git-edit -params 1 -shell-script-candidates %{ git ls-files } %{ edit %arg{1} } -docstring "Uses git ls-files to find files"
 def mkdir %{ nop %sh{ mkdir -p $(dirname $kak_buffile) } } -docstring "Creates the directory up to this file"
@@ -233,6 +234,7 @@ map global normal <up> %{: grep-previous-match<ret>} -docstring "Prev grep match
 map global object h 'c<gt>,<lt><ret>' -docstring "select in the (h)tml angle brackets"
 map global object b 'c\s,\s<ret>' -docstring "select (b)etween whitespace"
 map global user b %{:b<space>} -docstring "Buffer select"
+map global user B %{: broot<ret>} -docstring "Broot in current directory"
 map global user c %{: comment-line<ret>} -docstring "Comment or uncomment selected lines"
 map global user M %{: mark-clear<ret>} -docstring "Remove word marking"
 map global user m %{: mark-word<ret>} -docstring "Mark word with highlight"
@@ -258,6 +260,7 @@ declare-user-mode inserts
 map global inserts -docstring "TODO" i %{<esc> OTODO(rrm): <esc> :comment-line<ret> }
 map global inserts -docstring "TODO" t %{aTODO(rrm): } 
 map global inserts -docstring "Name" n %{aRobert R Melton}
+map global inserts -docstring "Co-authored-by: " c %{aCo-authored-by: }
 map global inserts -docstring "Date" d %{!date<ret>}
 
 map global user -docstring "Enable Git keymap mode for next key" G ": enter-user-mode<space>git<ret>"
@@ -322,12 +325,6 @@ colorscheme nofrils-acme
 
 eval %sh{kak-lsp --kakoune --config ~/.config/kak-lsp/kak-lsp.toml -s $kak_session}
 map global lsp -docstring "Rename the item under cursor" R ": lsp-rename-prompt<ret>"
-
-set-option global explore_files_command fzf-files
-set-option global explore_buffers_command fzf-buffers
-
-define-command fzf-files -params .. -file-completion %(connect edit $(fd --type file . %arg(@) | fzf))
-define-command fzf-buffers %(connect buffer $(buffer | fzf))
 
 try %{ source ~/.kakrc.local } # system local
 try %{ source .kakrc.local } # project local
