@@ -260,10 +260,7 @@ declare-user-mode inserts
 map global inserts -docstring "TODO" i %{<esc> OTODO(rrm): <esc> :comment-line<ret> }
 map global inserts -docstring "TODO" t %{aTODO(rrm): } 
 map global inserts -docstring "Name" n %{aRobert R Melton}
-map global inserts -docstring "Co-authored-by: " b %{aCo-authored-by: Brendan Beltz <brendan.beltz@mobileposse.com>}
-map global inserts -docstring "Co-authored-by: " r %{aCo-authored-by: }
-map global inserts -docstring "Co-authored-by: " h %{aCo-authored-by: }
-map global inserts -docstring "Co-authored-by: " s %{aCo-authored-by: Sean Schofield <sean.schofield@mobileposse.com>}
+
 map global inserts -docstring "Date" d %{!date<ret>}
 
 map global user -docstring "Enable Git keymap mode for next key" G ": enter-user-mode<space>git<ret>"
