@@ -240,7 +240,7 @@ map global user M %{: mark-clear<ret>} -docstring "Remove word marking"
 map global user m %{: mark-word<ret>} -docstring "Mark word with highlight"
 map global user t %{: connect-terminal<ret>} -docstring "Start connected terminal"
 map global user r %{: nop %sh{tmux send-keys -t {bottom-right} Up Enter }<ret>} -docstring "Rerun in bottom-right"
-map global user R %{: %sh{tmux send-keys -t {bottom-right} C-c C-c C-c Up Enter }<ret>} -docstring "Cancel and rerun in bottom-right"
+map global user R %{: nop %sh{tmux send-keys -t {bottom-right} C-c C-c C-c Up Enter }<ret>} -docstring "Cancel and rerun in bottom-right"
 map global user e %{: expand<ret>} -docstring "Expand selection"
 map global user n %{: nnn .<ret>} -docstring "Run nnn file browser"
 map global user z %{: nop %sh{tmux resize-pane -Z}<ret>} -docstring "Zoom window"
@@ -260,7 +260,10 @@ declare-user-mode inserts
 map global inserts -docstring "TODO" i %{<esc> OTODO(rrm): <esc> :comment-line<ret> }
 map global inserts -docstring "TODO" t %{aTODO(rrm): } 
 map global inserts -docstring "Name" n %{aRobert R Melton}
-map global inserts -docstring "Co-authored-by: " c %{aCo-authored-by: }
+map global inserts -docstring "Co-authored-by: " b %{aCo-authored-by: Brendan Beltz <brendan.beltz@mobileposse.com>}
+map global inserts -docstring "Co-authored-by: " r %{aCo-authored-by: }
+map global inserts -docstring "Co-authored-by: " h %{aCo-authored-by: }
+map global inserts -docstring "Co-authored-by: " s %{aCo-authored-by: Sean Schofield <sean.schofield@mobileposse.com>}
 map global inserts -docstring "Date" d %{!date<ret>}
 
 map global user -docstring "Enable Git keymap mode for next key" G ": enter-user-mode<space>git<ret>"
