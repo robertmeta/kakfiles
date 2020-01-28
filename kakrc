@@ -266,8 +266,8 @@ map global inserts -docstring "Date" d %{!date<ret>}
 map global user -docstring "Enable Git keymap mode for next key" G ": enter-user-mode<space>git<ret>"
 declare-user-mode git
 map global git -docstring "commit - Record changes to the repository" c ": git commit<ret>"
-map global git -docstring "blame - Show what revision and author last modified each line of the current file" b ': connect "tig blame -C +%val{cursor_line} -- %val{buffile}"<ret>'
-map global git -docstring "diff - Show changes between HEAD and working tree" d ": git diff<ret>"
+map global git -docstring "blame - Show what revision and author last modified each line of the current file" b ': connect "tig blame -C +%val{cursor_line} -- %val{buffile}"<ret>,z'
+map global git -docstring "diff - Show changes between HEAD and working tree" d ": git diff<ret>,z"
 map global git -docstring "git - Explore the repository history" g ": repl tig<ret>"
 map global git -docstring "github - Copy canonical GitHub URL to system clipboard" h ": github-url<ret>"
 map global git -docstring "log - Show commit logs for the current file" l ': repl "tig log -- %val{buffile}"<ret>'
