@@ -192,8 +192,8 @@ define-command github-url \
         printf "echo -markup %%{{Information}copied canonical GitHub URL to system clipboard}\n"
     }
 }
-def nnn -params .. -file-completion %(connect nnn %arg(@)) -docstring "Open with nnn"
-def broot -params .. -file-completion %(connect broot %arg(@)) -docstring "Open with broot"
+def nnn -params .. -file-completion %(connect-terminal nnn %arg(@)) -docstring "Open with nnn"
+def broot -params .. -file-completion %(connect-terminal broot %arg(@)) -docstring "Open with broot"
 def findit -params 1 -shell-script-candidates %{ rg --files } %{ edit %arg{1} } -docstring "Uses rg to find file"
 def git-edit -params 1 -shell-script-candidates %{ git ls-files } %{ edit %arg{1} } -docstring "Uses git ls-files to find files"
 def mkdir %{ nop %sh{ mkdir -p $(dirname $kak_buffile) } } -docstring "Creates the directory up to this file"
@@ -233,8 +233,8 @@ map global normal <right> %{: buffer-next<ret>} -docstring "Next buffer"
 map global normal <up> %{: grep-previous-match<ret>} -docstring "Prev grep match"
 map global object h 'c<gt>,<lt><ret>' -docstring "select in the (h)tml angle brackets"
 map global object b 'c\s,\s<ret>' -docstring "select (b)etween whitespace"
-map global user b %{:b<space>} -docstring "Buffer select"
-map global user B %{: broot<ret>} -docstring "Broot in current directory"
+map global user B %{:b<space>} -docstring "Buffer select"
+map global user b %{: broot<ret>} -docstring "Broot in current directory"
 map global user c %{: comment-line<ret>} -docstring "Comment or uncomment selected lines"
 map global user M %{: mark-clear<ret>} -docstring "Remove word marking"
 map global user m %{: mark-word<ret>} -docstring "Mark word with highlight"
@@ -266,7 +266,7 @@ map global inserts -docstring "Date" d %{!date<ret>}
 map global user -docstring "Enable Git keymap mode for next key" G ": enter-user-mode<space>git<ret>"
 declare-user-mode git
 map global git -docstring "commit - Record changes to the repository" c ": git commit<ret>"
-map global git -docstring "blame - Show what revision and author last modified each line of the current file" b ': connect "tig blame -C +%val{cursor_line} -- %val{buffile}"<ret>,z'
+map global git -docstring "blame - Show what revision and author last modified each line of the current file" b ': connect-terminal "tig blame -C +%val{cursor_line} -- %val{buffile}"<ret>,z'
 map global git -docstring "diff - Show changes between HEAD and working tree" d ": git diff<ret>,z"
 map global git -docstring "git - Explore the repository history" g ": repl tig<ret>"
 map global git -docstring "github - Copy canonical GitHub URL to system clipboard" h ": github-url<ret>"
