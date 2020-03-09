@@ -18,9 +18,10 @@ plug "https://gitlab.com/fsub/kakoune-mark.git"
 plug "occivink/kakoune-find"
 plug "lePerdu/kakboard"
 plug "andreyorst/fzf.kak"
-plug "ul/kak-lsp" do %{
-    cargo install --locked --force --path .
-}
+# TODO: learn how to custom config path here
+#plug "ul/kak-lsp" do %{
+#    cargo install --locked --force --path .
+#}
 
 eval %sh{
     for tool in ag pt rg; do
@@ -282,7 +283,8 @@ map global inserts -docstring "Date" d %{!date<ret>}
 map global user -docstring "Enable Git keymap mode for next key" G ": enter-user-mode<space>git<ret>"
 declare-user-mode git
 map global git -docstring "commit - Record changes to the repository" c ": git commit<ret>"
-map global git -docstring "blame - Show what revision and author last modified each line of the current file" b ': connect-terminal "tig blame -C +%val{cursor_line} -- %val{buffile}"<ret>,z'
+map global git -docstring "blame - Show what revision and author last modified each line of the current file" b ': connect-terminal "tig blame +%val{cursor_line} -- %val{buffile}"<ret>,z'
+map global git -docstring "blame - Show what revision and author last modified each line of the current file" B ': connect-terminal "tig blame +%val{cursor_line} -- %val{buffile}"<ret>,z'
 map global git -docstring "diff - Show changes between HEAD and working tree" d ": git diff<ret>,z"
 map global git -docstring "git - Explore the repository history" g ": repl tig<ret>"
 map global git -docstring "github - Copy canonical GitHub URL to system clipboard" h ": github-url<ret>"
