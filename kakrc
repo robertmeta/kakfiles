@@ -12,7 +12,7 @@
 source "%val{config}/plugins/plug.kak/rc/plug.kak"
 plug "occivink/kakoune-sudo-write"
 plug "alexherbo2/connect.kak"
-plug "alexherbo2/auto-pairs.kak"
+# plug "alexherbo2/auto-pairs.kak"
 plug "andreyorst/smarttab.kak"
 plug "https://gitlab.com/fsub/kakoune-mark.git"
 plug "occivink/kakoune-find"
@@ -266,7 +266,6 @@ map global user -docstring "Enable grep keymap mode for next key" g ": enter-use
 declare-user-mode grep
 map global grep l %{: grep '' %val{bufname} -H<left><left><left><left><left><left><left><left><left><left><left><left><left><left><left><left><left><left>} -docstring "Local grep"
 map global grep g %{<A-i>w"gy<esc>: grep <C-r>g<ret>: try %{delete-buffer *grep*:<C-r>g}<ret> : try %{rename-buffer *grep*:<C-r>g}<ret> : try %{mark-pattern set <C-r>g}<ret>} -docstring "Grep for word under cursor, persist results"
-map global grep s %{<A-i>w"gy<esc>: grep <C-r>g<ret>: try %{delete-buffer *grep*:<C-r>g}<ret> : try %{rename-buffer *grep*:<C-r>g}<ret> : try %{mark-pattern set <C-r>g}<ret>} -docstring "Grep for word under cursor, persist results"
 map global grep / ': exec /<ret>\Q\E<left><left>' -docstring 'regex disabled'
 map global grep i '/(?i)'                         -docstring 'case insensitive'
 
@@ -283,8 +282,8 @@ map global inserts -docstring "Date" d %{!date<ret>}
 map global user -docstring "Enable Git keymap mode for next key" G ": enter-user-mode<space>git<ret>"
 declare-user-mode git
 map global git -docstring "commit - Record changes to the repository" c ": git commit<ret>"
-map global git -docstring "blame - Show what revision and author last modified each line of the current file" b ': connect-terminal tig blame +%val{cursor_line} -- %val{buffile}<ret>,z'
-map global git -docstring "blame - Show what revision and author last modified each line of the current file" B ': echo connect-terminal tig blame +%val{cursor_line} -- %val{buffile}<ret>,z'
+map global git -docstring "blame - Show what revision and author last modified each line of the current file" b ": connect-terminal tig blame +%val{cursor_line} -- %val{buffile}<ret>,z"
+map global git -docstring "blame - Show what revision and author last modified each line of the current file" B "<esc>,Gb"
 map global git -docstring "diff - Show changes between HEAD and working tree" d ": git diff<ret>,z"
 map global git -docstring "git - Explore the repository history" g ": repl tig<ret>"
 map global git -docstring "github - Copy canonical GitHub URL to system clipboard" h ": github-url<ret>"
