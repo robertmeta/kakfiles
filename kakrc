@@ -12,8 +12,15 @@
 source "%val{config}/plugins/plug.kak/rc/plug.kak"
 plug "occivink/kakoune-sudo-write"
 plug "alexherbo2/connect.kak"
+plug "alexherbo2/auto-pairs.kak"
+plug "andreyorst/smarttab.kak"
 plug "https://gitlab.com/fsub/kakoune-mark.git"
-
+plug "occivink/kakoune-find"
+plug "lePerdu/kakboard"
+plug "andreyorst/fzf.kak"
+plug "ul/kak-lsp" do %{
+    cargo install --locked --force --path .
+}
 
 eval %sh{
     for tool in ag pt rg; do
