@@ -9,6 +9,7 @@
 # - jq for json deserializaton, required by gogetdoc
 
 # plugins
+source "%val{config}/plugins/plug.kak/rc/plug.kak"
 plug "occivink/kakoune-sudo-write"
 plug "alexherbo2/connect.kak"
 plug "https://gitlab.com/fsub/kakoune-mark.git"
