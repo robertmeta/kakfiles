@@ -14,7 +14,8 @@ plug "occivink/kakoune-sudo-write"
 plug "alexherbo2/connect.kak"
 # plug "alexherbo2/auto-pairs.kak"
 plug "andreyorst/smarttab.kak"
-plug "https://gitlab.com/fsub/kakoune-mark.git"
+plug "fsub/kakoune-mark.git" domain "gitlab.com"
+plug "KJ_Duncan/kakoune-kotlin.kak" domain "bitbucket.org"
 plug "occivink/kakoune-find"
 plug "lePerdu/kakboard"
 plug "andreyorst/fzf.kak"
@@ -282,7 +283,7 @@ map global inserts -docstring "Date" d %{!date<ret>}
 map global user -docstring "Enable Git keymap mode for next key" G ": enter-user-mode<space>git<ret>"
 declare-user-mode git
 map global git -docstring "commit - Record changes to the repository" c ": git commit<ret>"
-#map global git -docstring "blame - Show what revision and author last modified each line of the current file" b ": connect-terminal tig blame +%val{cursor_line} -- %val{buffile}<ret>,z"
+map global git -docstring "blame - Show what revision and author last modified each line of the current file" b ': connect-terminal tig blame "+%val{cursor_line}" -- "%val{buffile}"<ret>,z'
 map global git -docstring "blame - Show what revision and author last modified each line of the current file" B "<esc>,Gb"
 map global git -docstring "diff - Show changes between HEAD and working tree" d ": git diff<ret>,z"
 map global git -docstring "git - Explore the repository history" g ": repl tig<ret>"
