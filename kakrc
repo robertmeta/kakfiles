@@ -79,7 +79,7 @@ hook global WinSetOption filetype=(rust|python|go|javascript|typescript|c|cpp) %
     lsp-enable-window
     lsp-auto-hover-enable
     lsp-auto-hover-insert-mode-enable
-    lsp-auto-hover-signature-help-enable
+    lsp-auto-signature-help-enable
     map window user o %{: grep HACK|TODO|FIXME|XXX|NOTE|^\w+ %val{bufname} -H<ret>} -docstring "Show outline"
 
 }
