@@ -7,6 +7,13 @@
 # - goimports for code formatting on save (https://golang.org/x/tools/cmd/goimports)
 # - gogetdoc for documentation display and source jump (https://github.com/zmb3/gogetdoc)
 # - jq for json deserializaton, required by gogetdoc
+
+# plugins
+plug "occivink/kakoune-sudo-write"
+plug "alexherbo2/connect.kak"
+plug "https://gitlab.com/fsub/kakoune-mark.git"
+
+
 eval %sh{
     for tool in ag pt rg; do
         if command -V "$tool" >/dev/null 2>/dev/null; then
@@ -242,7 +249,6 @@ map global user m %{: mark-word<ret>} -docstring "Mark word with highlight"
 map global user t %{: connect-terminal<ret>} -docstring "Start connected terminal"
 map global user r %{: nop %sh{tmux send-keys -t {bottom-right} Up Enter }<ret>} -docstring "Rerun in bottom-right"
 map global user R %{: nop %sh{tmux send-keys -t {bottom-right} C-c C-c C-c Up Enter }<ret>} -docstring "Cancel and rerun in bottom-right"
-map global user e %{: expand<ret>} -docstring "Expand selection"
 map global user n %{: nnn .<ret>} -docstring "Run nnn file browser"
 map global user z %{: nop %sh{tmux resize-pane -Z}<ret>} -docstring "Zoom window"
 map global user o %{: grep HACK|TODO|FIXME|XXX|NOTE %val{bufname} -H<ret>} -docstring "Show outline"
@@ -330,3 +336,5 @@ map global lsp -docstring "Rename the item under cursor" R ": lsp-rename-prompt<
 
 try %{ source ~/.kakrc.local } # system local
 try %{ source .kakrc.local } # project local
+
+
