@@ -16,6 +16,7 @@ plug "andreyorst/smarttab.kak"
 plug "fsub/kakoune-mark.git" domain "gitlab.com"
 plug "occivink/kakoune-find"
 plug "andreyorst/fzf.kak"
+plug "Vurich/ranger-kak"
 # TODO: learn how to custom config path here
 #plug "ul/kak-lsp" do %{
 #    cargo install --locked --force --path .
@@ -343,5 +344,3 @@ map global lsp -docstring "Rename the item under cursor" R ": lsp-rename-prompt<
 
 try %{ source ~/.kakrc.local } # system local
 try %{ source .kakrc.local } # project local
-
-
