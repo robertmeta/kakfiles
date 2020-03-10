@@ -12,12 +12,9 @@
 source "%val{config}/plugins/plug.kak/rc/plug.kak"
 plug "occivink/kakoune-sudo-write"
 plug "alexherbo2/connect.kak"
-# plug "alexherbo2/auto-pairs.kak"
 plug "andreyorst/smarttab.kak"
 plug "fsub/kakoune-mark.git" domain "gitlab.com"
-plug "KJ_Duncan/kakoune-kotlin.kak" domain "bitbucket.org"
 plug "occivink/kakoune-find"
-plug "lePerdu/kakboard"
 plug "andreyorst/fzf.kak"
 # TODO: learn how to custom config path here
 #plug "ul/kak-lsp" do %{
