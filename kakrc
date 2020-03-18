@@ -11,6 +11,7 @@
 # plugins
 source "%val{config}/plugins/plug.kak/rc/plug.kak"
 plug "occivink/kakoune-sudo-write"
+plug "alexherbo2/prelude.kak"
 plug "alexherbo2/connect.kak"
 plug "andreyorst/smarttab.kak"
 plug "fsub/kakoune-mark.git" domain "gitlab.com"
