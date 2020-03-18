@@ -17,7 +17,6 @@ plug "andreyorst/smarttab.kak"
 plug "fsub/kakoune-mark.git" domain "gitlab.com"
 plug "occivink/kakoune-find"
 plug "andreyorst/fzf.kak"
-plug "Vurich/ranger-kak"
 # TODO: learn how to custom config path here
 #plug "ul/kak-lsp" do %{
 #    cargo install --locked --force --path .
