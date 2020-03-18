@@ -114,7 +114,7 @@ hook global WinSetOption filetype=sql %{
 }
 hook global WinSetOption filetype=typescript %{
     set window indentwidth 2
-    map window user o %{: grep HACK|TODO|FIXME|XXX|NOTE|^function|^export|^enum|^static|^require|^import|^package|^const|^class|^interface|^import|^type %val{bufname} -H<ret>} -docstring "Show outline"
+    map window user o %{: grep HACK|TODO|FIXME|XXX|NOTE|=>|^function|^export|^enum|^static|^require|^import|^package|^const|^class|^interface|^import|^type %val{bufname} -H<ret>} -docstring "Show outline"
     set window lintcmd 'tslint'
     set window formatcmd 'prettier --stdin --parser typescript'
     hook buffer BufWritePre .* %{format}
@@ -179,11 +179,9 @@ hook global BufWritePre .* %{ evaluate-commands %sh{
 
 define-command connect-vertical %{
     alias global terminal tmux-terminal-vertical
-    connect
 }
 define-command connect-horizontal %{
     alias global terminal tmux-terminal-horizontal
-    connect
 }
 
 define-command github-url \
@@ -216,9 +214,9 @@ define-command github-url \
         printf "echo -markup %%{{Information}copied canonical GitHub URL to system clipboard}\n"
     }
 }
-def nnn -params .. -file-completion %(connect-terminal nnn %arg(@)) -docstring "Open with nnn"
-def ranger -params .. -file-completion %(connect-horizontal ranger %arg(@)) -docstring "Open with ranger"
-def broot -params .. -file-completion %(connect-terminal broot %arg(@)) -docstring "Open with broot"
+def nnn -params .. -file-completion %(connect-horizontal; connect-terminal nnn %arg(@)) -docstring "Open with nnn"
+def ranger -params .. -file-completion %(connect-vertical; connect-terminal ranger %arg(@)) -docstring "Open with ranger"
+def broot -params .. -file-completion %(connect-horizontal; connect-terminal broot %arg(@)) -docstring "Open with broot"
 def findit -params 1 -shell-script-candidates %{ rg --files } %{ edit %arg{1} } -docstring "Uses rg to find file"
 def git-edit -params 1 -shell-script-candidates %{ git ls-files } %{ edit %arg{1} } -docstring "Uses git ls-files to find files"
 def mkdir %{ nop %sh{ mkdir -p $(dirname $kak_buffile) } } -docstring "Creates the directory up to this file"
@@ -264,7 +262,8 @@ map global user B %{: broot<ret>} -docstring "Broot in current directory"
 map global user c %{: comment-line<ret>} -docstring "Comment or uncomment selected lines"
 map global user M %{: mark-clear<ret>} -docstring "Remove word marking"
 map global user m %{: mark-word<ret>} -docstring "Mark word with highlight"
-map global user t %{: connect-terminal<ret>} -docstring "Start connected terminal"
+map global user t %{: connect-horizontal; connect-terminal<ret>} -docstring "Start connected horizonal terminal"
+map global user t %{: connect-vertical; connect-terminal<ret>} -docstring "Start connected vertical terminal"
 map global user r %{: nop %sh{tmux send-keys -t {bottom-right} Up Enter }<ret>} -docstring "Rerun in bottom-right"
 map global user R %{: nop %sh{tmux send-keys -t {bottom-right} C-c C-c C-c Up Enter }<ret>} -docstring "Cancel and rerun in bottom-right"
 map global user n %{: nnn .<ret>} -docstring "Run nnn file browser"
@@ -291,7 +290,7 @@ map global inserts -docstring "Date" d %{!date<ret>}
 map global user -docstring "Enable Git keymap mode for next key" G ": enter-user-mode<space>git<ret>"
 declare-user-mode git
 map global git -docstring "commit - Record changes to the repository" c ": git commit<ret>"
-map global git -docstring "blame - Show what revision and author last modified each line of the current file" b ': connect-terminal tig blame "+%val{cursor_line}" -- "%val{buffile}"<ret>,z'
+map global git -docstring "blame - Show what revision and author last modified each line of the current file" b ': connect-vertical; connect-terminal tig blame "+%val{cursor_line}" -- "%val{buffile}"<ret>,z'
 map global git -docstring "blame - Show what revision and author last modified each line of the current file" B "<esc>,Gb"
 map global git -docstring "diff - Show changes between HEAD and working tree" d ": git diff<ret>,z"
 map global git -docstring "git - Explore the repository history" g ": repl tig<ret>"
