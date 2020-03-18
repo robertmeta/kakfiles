@@ -178,6 +178,15 @@ hook global BufWritePre .* %{ evaluate-commands %sh{
     mkdir --parents "$container"
 }}
 
+define-command connect-vertical %{
+    alias global terminal tmux-terminal-vertical
+    connect
+}
+define-command connect-horizontal %{
+    alias global terminal tmux-terminal-horizontal
+    connect
+}
+
 define-command github-url \
     -docstring "github-url: copy the canonical GitHub URL to the system clipboard" \
     %{ evaluate-commands %sh{
@@ -209,6 +218,7 @@ define-command github-url \
     }
 }
 def nnn -params .. -file-completion %(connect-terminal nnn %arg(@)) -docstring "Open with nnn"
+def ranger -params .. -file-completion %(connect-horizontal ranger %arg(@)) -docstring "Open with ranger"
 def broot -params .. -file-completion %(connect-terminal broot %arg(@)) -docstring "Open with broot"
 def findit -params 1 -shell-script-candidates %{ rg --files } %{ edit %arg{1} } -docstring "Uses rg to find file"
 def git-edit -params 1 -shell-script-candidates %{ git ls-files } %{ edit %arg{1} } -docstring "Uses git ls-files to find files"
