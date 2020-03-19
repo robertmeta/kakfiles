@@ -263,7 +263,7 @@ map global user c %{: comment-line<ret>} -docstring "Comment or uncomment select
 map global user M %{: mark-clear<ret>} -docstring "Remove word marking"
 map global user m %{: mark-word<ret>} -docstring "Mark word with highlight"
 map global user t %{: connect-horizontal; connect-terminal<ret>} -docstring "Start connected horizonal terminal"
-map global user t %{: connect-vertical; connect-terminal<ret>} -docstring "Start connected vertical terminal"
+map global user T %{: connect-vertical; connect-terminal<ret>} -docstring "Start connected vertical terminal"
 map global user r %{: nop %sh{tmux send-keys -t {bottom-right} Up Enter }<ret>} -docstring "Rerun in bottom-right"
 map global user R %{: nop %sh{tmux send-keys -t {bottom-right} C-c C-c C-c Up Enter }<ret>} -docstring "Cancel and rerun in bottom-right"
 map global user n %{: nnn .<ret>} -docstring "Run nnn file browser"
