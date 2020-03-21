@@ -114,7 +114,7 @@ hook global WinSetOption filetype=sql %{
 }
 hook global WinSetOption filetype=typescript %{
     set window indentwidth 2
-    map window user o %{: grep HACK|TODO|FIXME|XXX|NOTE|=>|^function|^export|^enum|^static|^require|^import|^package|^const|^class|^interface|^import|^type %val{bufname} -H<ret>} -docstring "Show outline"
+    map window user o %{: grep HACK|TODO|FIXME|XXX|NOTE|=>|^function|^export|^enum|^static|^require|^package|^const|^class|^interface|^type %val{bufname} -H<ret>} -docstring "Show outline"
     set window lintcmd 'tslint'
     set window formatcmd 'prettier --stdin --parser typescript'
     hook buffer BufWritePre .* %{format}
@@ -149,7 +149,7 @@ hook global WinSetOption filetype=handlebars %{
 hook global WinSetOption filetype=javascript %{
     set window indentwidth 2
     set window lintcmd 'jslint'
-    map window user o %{: grep HACK|TODO|FIXME|XXX|NOTE|^function|^const|^class|^interface|^import|^type %val{bufname} -H<ret>} -docstring "Show outline"
+    map window user o %{: grep HACK|TODO|FIXME|XXX|NOTE|^function|^const|=>|^class|^interface|^type %val{bufname} -H<ret>} -docstring "Show outline"
     set window formatcmd 'prettier --stdin --parser flow'
     hook buffer BufWritePre .* %{format}
 }
@@ -166,7 +166,7 @@ hook global WinSetOption filetype=go %{
 
     add-highlighter window/ regex 'if err != nil .*?\{.*?\}' 0:comment
 
-    map window user o %{: grep HACK|TODO|FIXME|XXX|NOTE|^func|^import|^var|^package|^const|^goto|^struct|^type %val{bufname} -H<ret>} -docstring "Show outline"
+    map window user o %{: grep HACK|TODO|FIXME|XXX|NOTE|^func|^var|^package|^const|^goto|^struct|^type %val{bufname} -H<ret>} -docstring "Show outline"
 }
 hook global BufWritePost .*\.go$ %{
     go-format -use-goimports
@@ -249,7 +249,7 @@ alias global wqa! write-all-quit
 alias global wq write-quit
 alias global wq! write-quit!
 
-map global normal -docstring "Quick find" -- - %{:findit <tab>}
+map global normal -docstring "Quick find" -- - %{:broot<ret>}
 map global normal -docstring "Quick grep" -- = %{:grep }
 map global normal <down> %{: grep-next-match<ret>} -docstring "Next grep match"
 map global normal <left> %{: buffer-previous<ret>} -docstring "Prev buffer"
