@@ -17,7 +17,7 @@ plug "andreyorst/smarttab.kak"
 plug "fsub/kakoune-mark.git" domain "gitlab.com"
 plug "occivink/kakoune-find"
 plug "JJK96/kakoune-emmet"
-plug "kakoune-snippets"
+plug "occivink/kakoune-snippets"
 plug "andreyorst/fzf.kak"
 # TODO: learn how to custom config path here
 #plug "ul/kak-lsp" do %{
