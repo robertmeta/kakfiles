@@ -251,7 +251,7 @@ alias global wqa! write-all-quit
 alias global wq write-quit
 alias global wq! write-quit!
 
-map global normal -docstring "Quick find" -- - %{:broot -g<ret>}
+map global normal -docstring "Quick find" -- - %{:findit <tab>}
 map global normal -docstring "Quick find" -- _ %{:broot -gc :gs<ret>}
 map global normal -docstring "Quick grep" -- = %{:grep }
 map global normal <down> %{: grep-next-match<ret>} -docstring "Next grep match"
