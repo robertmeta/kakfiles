@@ -251,6 +251,7 @@ alias global wqa! write-all-quit
 alias global wq write-quit
 alias global wq! write-quit!
 
+map global prompt <a-i> '<up><home>(?i)<ret>'
 map global normal -docstring "Quick find" -- - %{:findit <tab>}
 map global normal -docstring "Quick find" -- _ %{:broot -gc :gs<ret>}
 map global normal -docstring "Quick grep" -- = %{:grep }
@@ -263,6 +264,7 @@ map global object b 'c\s,\s<ret>' -docstring "select (b)etween whitespace"
 map global user b %{:b<space>} -docstring "Buffer select"
 map global user B %{: broot<ret>} -docstring "Broot in current directory"
 map global user c %{: comment-line<ret>} -docstring "Comment or uncomment selected lines"
+map global user f %{| fold -w ${kak_window_width} -s} -docstring "Fold to window width"
 map global user M %{: mark-clear<ret>} -docstring "Remove word marking"
 map global user m %{: mark-word<ret>} -docstring "Mark word with highlight"
 map global user t %{: connect-horizontal; connect-terminal<ret>} -docstring "Start connected horizonal terminal"
