@@ -117,7 +117,7 @@ hook global WinSetOption filetype=sql %{
 hook global WinSetOption filetype=typescript %{
     set window indentwidth 2
     map window user o %{: grep HACK|TODO|FIXME|XXX|NOTE|=>|^function|^export|^enum|^static|^require|^package|^const|^class|^interface|^type %val{bufname} -H<ret>} -docstring "Show outline"
-    set window lintcmd 'tslint'
+    set window lintcmd 'eslint'
     set window formatcmd 'prettier --stdin --parser typescript'
     hook buffer BufWritePre .* %{format}
 
