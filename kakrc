@@ -156,6 +156,7 @@ hook global WinSetOption filetype=javascript %{
     hook buffer BufWritePre .* %{format}
 }
 hook global WinSetOption filetype=markdown %{
+    set window indentwidth 2
     set window formatcmd 'prettier --stdin --parser markdown'
     hook buffer BufWritePre .* %{format}
     map window user o %{: grep HACK|TODO|FIXME|XXX|NOTE|^# %val{bufname} -H<ret>} -docstring "Show outline"
