@@ -117,7 +117,7 @@ hook global WinSetOption filetype=sql %{
 hook global WinSetOption filetype=typescript %{
     set window indentwidth 2
     map window user o %{: grep HACK|TODO|FIXME|XXX|NOTE|=>|^function|^export|^enum|^static|^require|^package|^const|^class|^interface|^type %val{bufname} -H<ret>} -docstring "Show outline"
-    set window lintcmd 'tslint'
+    set window lintcmd 'eslint'
     set window formatcmd 'prettier --stdin --parser typescript'
     hook buffer BufWritePre .* %{format}
 
@@ -252,6 +252,7 @@ alias global wqa! write-all-quit
 alias global wq write-quit
 alias global wq! write-quit!
 
+map global prompt <a-i> '<up><home>(?i)<ret>'
 map global normal -docstring "Quick find" -- - %{:findit <tab>}
 map global normal -docstring "Quick find" -- _ %{:broot -gc :gs<ret>}
 map global normal -docstring "Quick grep" -- = %{:grep }
@@ -264,6 +265,9 @@ map global object b 'c\s,\s<ret>' -docstring "select (b)etween whitespace"
 map global user b %{:b<space>} -docstring "Buffer select"
 map global user B %{: broot<ret>} -docstring "Broot in current directory"
 map global user c %{: comment-line<ret>} -docstring "Comment or uncomment selected lines"
+map global user k %{: <c-r>.<ret>} -docstring "Run selected text as a command"
+map global user f %{| fold -w ${kak_window_width} -s} -docstring "Fold to window width"
+map global user F %{: e -scratch *tree*<ret>!tree -fQcDr<ret>:map buffer normal <lt>ret<gt> <lt>a-h<gt>f"<lt>right<gt><lt>a-i<gt>"gf<ret>} -docstring "Create a buffer with tree output"
 map global user M %{: mark-clear<ret>} -docstring "Remove word marking"
 map global user m %{: mark-word<ret>} -docstring "Mark word with highlight"
 map global user t %{: connect-horizontal; connect-terminal<ret>} -docstring "Start connected horizonal terminal"
@@ -279,7 +283,10 @@ declare-user-mode grep
 map global grep l %{: grep '' %val{bufname} -H<left><left><left><left><left><left><left><left><left><left><left><left><left><left><left><left><left><left>} -docstring "Local grep"
 map global grep g %{<A-i>w"gy<esc>: grep <C-r>g<ret>: try %{delete-buffer *grep*:<C-r>g}<ret> : try %{rename-buffer *grep*:<C-r>g}<ret> : try %{mark-pattern set <C-r>g}<ret>} -docstring "Grep for word under cursor, persist results"
 map global grep / ': exec /<ret>\Q\E<left><left>' -docstring 'regex disabled'
-map global grep i '/(?i)'                         -docstring 'case insensitive'
+map global grep i %{:grep -i ''<left>} -docstring 'case insensitive'
+map global grep t %{:grep -i '' -g '*.ts'<left><left><left><left><left><left><left><left><left><left><left>} -docstring 'just typescript'
+map global grep k %{:grep -i '' -g '*.kt'<left><left><left><left><left><left><left><left><left><left><left>} -docstring 'just kotlin'
+map global grep g %{:grep -i '' -g '*.go'<left><left><left><left><left><left><left><left><left><left><left>} -docstring 'just go'
 
 map global user -docstring "Enable Insert keymap mode for next key" i ": enter-user-mode<space>inserts<ret>"
 declare-user-mode inserts
