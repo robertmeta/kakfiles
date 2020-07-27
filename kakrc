@@ -23,6 +23,10 @@ plug "andreyorst/fzf.kak"
 #plug "ul/kak-lsp" do %{
 #    cargo install --locked --force --path .
 #}
+plug 'delapouite/kakoune-text-objects' %{
+    text-object-map
+}
+
 
 eval %sh{
     for tool in ag pt rg; do
@@ -266,7 +270,7 @@ map global user b %{:b<space>} -docstring "Buffer select"
 map global user B %{: broot<ret>} -docstring "Broot in current directory"
 map global user c %{: comment-line<ret>} -docstring "Comment or uncomment selected lines"
 map global user k %{: <c-r>.<ret>} -docstring "Run selected text as a command"
-map global user f %{| fold -w ${kak_window_width} -s} -docstring "Fold to window width"
+map global user f %{| fold -w ${kak_window_width} -s<ret>} -docstring "Fold to window width"
 map global user F %{: e -scratch *tree*<ret>!tree -fQcDr<ret>:map buffer normal <lt>ret<gt> <lt>a-h<gt>f"<lt>right<gt><lt>a-i<gt>"gf<ret>} -docstring "Create a buffer with tree output"
 map global user M %{: mark-clear<ret>} -docstring "Remove word marking"
 map global user m %{: mark-word<ret>} -docstring "Mark word with highlight"
