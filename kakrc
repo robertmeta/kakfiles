@@ -288,9 +288,9 @@ map global grep l %{: grep '' %val{bufname} -H<left><left><left><left><left><lef
 map global grep g %{<A-i>w"gy<esc>: grep <C-r>g<ret>: try %{delete-buffer *grep*:<C-r>g}<ret> : try %{rename-buffer *grep*:<C-r>g}<ret> : try %{mark-pattern set <C-r>g}<ret>} -docstring "Grep for word under cursor, persist results"
 map global grep / ': exec /<ret>\Q\E<left><left>' -docstring 'regex disabled'
 map global grep i %{:grep -i ''<left>} -docstring 'case insensitive'
-map global grep t %{:grep -i '' -g '*.ts'<left><left><left><left><left><left><left><left><left><left><left>} -docstring 'just typescript'
-map global grep k %{:grep -i '' -g '*.kt'<left><left><left><left><left><left><left><left><left><left><left>} -docstring 'just kotlin'
-map global grep g %{:grep -i '' -g '*.go'<left><left><left><left><left><left><left><left><left><left><left>} -docstring 'just go'
+map global grep T %{:grep -i '' -g '*.ts'<left><left><left><left><left><left><left><left><left><left><left>} -docstring 'just typescript'
+map global grep K %{:grep -i '' -g '*.kt'<left><left><left><left><left><left><left><left><left><left><left>} -docstring 'just kotlin'
+map global grep G %{:grep -i '' -g '*.go'<left><left><left><left><left><left><left><left><left><left><left>} -docstring 'just go'
 
 map global user -docstring "Enable Insert keymap mode for next key" i ": enter-user-mode<space>inserts<ret>"
 declare-user-mode inserts
