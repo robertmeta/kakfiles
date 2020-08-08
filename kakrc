@@ -35,10 +35,14 @@ eval %sh{
         fi
     done
 }
+
+try %{ set global ui_options ncurses_assistant=none ncurses_enable_mouse=true ncurses_set_title=false } 
+try %{ set global ui_options terminal_assistant=off terminal_enable_mouse=true terminal_set_title=false terminal_wheel_scroll_amount=10 }
+
 evaluate-commands %sh{
     case $(uname) in
-        Linux) printf "set global ui_options ncurses_assistant=none ncurses_enable_mouse=true ncurses_set_title=false ncurses_wheel_down_button=0" ;;
-        Darwin) printf "set global ui_options ncurses_assistant=none ncurses_enable_mouse=true ncurses_set_title=false ncurses_wheel_down_button=5" ;;
+        Linux) printf "set global ui_options ncurses_wheel_down_button=0" ;;
+        Darwin) printf "set global ui_options ncurses_wheel_down_button=5" ;;
     esac
 }
 set global scrolloff 5,5
