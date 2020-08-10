@@ -12,21 +12,18 @@
 source "%val{config}/plugins/plug.kak/rc/plug.kak"
 plug "occivink/kakoune-sudo-write"
 plug "alexherbo2/prelude.kak"
+plug "alexherbo2/terminal-mode.kak"
 plug "alexherbo2/connect.kak"
 plug "andreyorst/smarttab.kak"
 plug "fsub/kakoune-mark.git" domain "gitlab.com"
 plug "occivink/kakoune-find"
-plug "JJK96/kakoune-emmet"
-plug "occivink/kakoune-snippets"
-plug "andreyorst/fzf.kak"
+# plug "JJK96/kakoune-emmet"
+# plug "occivink/kakoune-snippets"
+# plug "andreyorst/fzf.kak"
 # TODO: learn how to custom config path here
 #plug "ul/kak-lsp" do %{
 #    cargo install --locked --force --path .
 #}
-plug 'delapouite/kakoune-text-objects' %{
-    text-object-map
-}
-
 
 eval %sh{
     for tool in ag pt rg; do
@@ -35,6 +32,8 @@ eval %sh{
         fi
     done
 }
+
+hook global BufCreate .* "try %{editorconfig-load} "
 
 try %{ set global ui_options ncurses_assistant=none ncurses_enable_mouse=true ncurses_set_title=false } 
 try %{ set global ui_options terminal_assistant=off terminal_enable_mouse=true terminal_set_title=false terminal_wheel_scroll_amount=10 }
