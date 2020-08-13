@@ -369,5 +369,11 @@ colorscheme nofrils-acme
 eval %sh{kak-lsp --kakoune --config ~/.config/kak-lsp/kak-lsp.toml -s $kak_session}
 map global lsp -docstring "Rename the item under cursor" R ": lsp-rename-prompt<ret>"
 
+def -hidden open-selected-files %{
+    eval -itersel %{ try %{ exec -with-hooks -draft gf } }
+    exec -with-hooks gf
+}
+map -docstring "file" global goto f "<esc>: open-selected-files<ret>"
+
 try %{ source ~/.kakrc.local } # system local
 try %{ source .kakrc.local } # project local
