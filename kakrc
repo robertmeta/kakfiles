@@ -369,5 +369,44 @@ colorscheme nofrils-acme
 eval %sh{kak-lsp --kakoune --config ~/.config/kak-lsp/kak-lsp.toml -s $kak_session}
 map global lsp -docstring "Rename the item under cursor" R ": lsp-rename-prompt<ret>"
 
+
+declare-option -hidden str my_grep_buffer
+hook -group my global WinDisplay \
+    \*(?:grep|find|make|references|diagnostics|implementations|symbols|cargo)\* %{
+    set-option global my_grep_buffer %val{bufname}
+}
+define-command -override my-grep-next-match \
+    -docstring 'Jump to the next match in a grep-like buffer' %{
+    evaluate-commands -try-client %opt{jumpclient} %{
+        buffer %opt{my_grep_buffer}
+        execute-keys "<a-l> /^[^:\n]+:\d+:<ret>"
+        grep-jump
+    }
+    try %{ evaluate-commands -client %opt{toolsclient} %{
+        buffer %opt{my_grep_buffer}
+        execute-keys gg %opt{grep_current_line}g
+    }}
+}
+define-command -override my-grep-previous-match \
+    -docstring 'Jump to the previous match in a grep-like buffer' %{
+    evaluate-commands -try-client %opt{jumpclient} %{
+        buffer %opt{my_grep_buffer}
+        execute-keys "g<a-h> <a-/>^[^:\n]+:\d+:<ret>"
+        grep-jump
+    }
+    try %{ evaluate-commands -client %opt{toolsclient} %{
+        buffer %opt{my_grep_buffer}
+        execute-keys gg %opt{grep_current_line}g
+    }}
+}
+
+def -hidden open-selected-files %{
+    eval -itersel %{ try %{ exec -with-hooks -draft gf } }
+    exec -with-hooks gf
+}
+map -docstring "file" global goto f "<esc>: open-selected-files<ret>"
+
+
+
 try %{ source ~/.kakrc.local } # system local
 try %{ source .kakrc.local } # project local
