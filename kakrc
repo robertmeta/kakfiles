@@ -400,7 +400,6 @@ define-command -override my-grep-previous-match \
     }}
 }
 
->>>>>>> ee9bc1be7df51cebe3a700d1454e72e0c8941365
 def -hidden open-selected-files %{
     eval -itersel %{ try %{ exec -with-hooks -draft gf } }
     exec -with-hooks gf
