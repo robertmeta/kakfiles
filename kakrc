@@ -281,7 +281,7 @@ map global user t %{: connect-horizontal; connect-terminal<ret>} -docstring "Sta
 map global user T %{: connect-vertical; connect-terminal<ret>} -docstring "Start connected vertical terminal"
 map global user r %{: nop %sh{tmux send-keys -t {bottom-right} Up Enter }<ret>} -docstring "Rerun in bottom-right"
 map global user R %{: nop %sh{tmux send-keys -t {bottom-right} C-c C-c C-c Up Enter }<ret>} -docstring "Cancel and rerun in bottom-right"
-map global user n %{: e ~/gdrive/Sync/notes.md<ret>ge2o<esc><space>!date +'### %Y.%m.%d@%H:%M:%S'<ret>o<esc>} -docstring "Note a thing"
+map global user n %{: e ~/gdrive/Sync/%sh{date +'%Y%0m%0d_%0H%0M%0S'}.md<ret>} -docstring "Note a thing"
 map global user z %{: nop %sh{tmux resize-pane -Z}<ret>} -docstring "Zoom window"
 map global user o %{: grep HACK|TODO|FIXME|XXX|NOTE %val{bufname} -H<ret>} -docstring "Show outline"
 
