@@ -411,5 +411,14 @@ def -hidden open-selected-files %{
 }
 map -docstring "file" global goto f "<esc>: open-selected-files<ret>"
 
+map global user "'" "f'<a-i>'" -docstring "select inside next single quotes"
+map global user '"' 'f"<a-i>"' -docstring "select inside next double quotes"
+map global user '(' 'f(<a-i>)' -docstring "select inside next parentheses"
+map global user '[' 'f[<a-i>]' -docstring "select inside next brackets"
+map global user '{' 'f{<a-i>}' -docstring "select inside next braces"
+map global user '<' 'f<lt><a-i><gt>' -docstring "select inside next angles"
+map global user '>' 'f<gt><a-i><lt>' -docstring "select between next angles"
+map global user 'u' ': select-next-param<ret>' -docstring "select next argument"
+
 try %{ source ~/.kakrc.local } # system local
 try %{ source .kakrc.local } # project local
