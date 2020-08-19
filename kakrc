@@ -11,10 +11,15 @@
 # plugins
 source "%val{config}/plugins/plug.kak/rc/plug.kak"
 plug "occivink/kakoune-sudo-write"
+plug "occivink/kakoune-vertical-selection"
 plug "alexherbo2/prelude.kak"
 plug "alexherbo2/terminal-mode.kak"
 plug "alexherbo2/connect.kak"
-plug "andreyorst/smarttab.kak"
+plug "alexherbo2/objectify.kak"
+plug "alexherbo2/text-objects.kak"
+plug "andreyorst/smarttab.kak" %{
+    expandtab
+}
 plug "fsub/kakoune-mark.git" domain "gitlab.com"
 plug "occivink/kakoune-find"
 # plug "JJK96/kakoune-emmet"
@@ -48,27 +53,27 @@ set global scrolloff 5,5
 
 # Indent
 set global indentwidth 4
-hook global InsertChar \t %{ try %{
-    execute-keys -draft "h<a-h><a-k>\A\h+\z<ret><a-;>;%opt{indentwidth}@"
-}}
-hook global InsertDelete ' ' %{ try %{
-    execute-keys -draft 'h<a-h><a-k>\A\h+\z<ret>i<space><esc><lt>'
-}}
-hook global InsertCompletionShow .* %{
-    try %{
-        # this command temporarily removes cursors preceded by whitespace;
-        # if there are no cursors left, it raises an error, does not
-        # continue to execute the mapping commands, and the error is eaten
-        # by the `try` command so no warning appears.
-        execute-keys -draft 'h<a-K>\h<ret>'
-        map window insert <tab> <c-n>
-        map window insert <s-tab> <c-p>
-    }
-}
-hook global InsertCompletionHide .* %{
-    unmap window insert <tab> <c-n>
-    unmap window insert <s-tab> <c-p>
-}
+# hook global InsertChar \t %{ try %{
+#     execute-keys -draft "h<a-h><a-k>\A\h+\z<ret><a-;>;%opt{indentwidth}@"
+# }}
+# hook global InsertDelete ' ' %{ try %{
+#     execute-keys -draft 'h<a-h><a-k>\A\h+\z<ret>i<space><esc><lt>'
+# }}
+# hook global InsertCompletionShow .* %{
+#     try %{
+#         # this command temporarily removes cursors preceded by whitespace;
+#         # if there are no cursors left, it raises an error, does not
+#         # continue to execute the mapping commands, and the error is eaten
+#         # by the `try` command so no warning appears.
+#         execute-keys -draft 'h<a-K>\h<ret>'
+#         map window insert <tab> <c-n>
+#         map window insert <s-tab> <c-p>
+#     }
+# }
+# hook global InsertCompletionHide .* %{
+#     unmap window insert <tab> <c-n>
+#     unmap window insert <s-tab> <c-p>
+# }
 
 set-face global MarkFace1 rgb:000000,rgb:00FF4D
 set-face global MarkFace2 rgb:000000,rgb:F9D3FA
@@ -177,6 +182,7 @@ hook global WinSetOption filetype=go %{
     add-highlighter window/ regex 'if err != nil .*?\{.*?\}' 0:comment
 
     map window user o %{: grep HACK|TODO|FIXME|XXX|NOTE|^func|^var|^package|^const|^goto|^struct|^type %val{bufname} -H<ret>} -docstring "Show outline"
+    noexpandtab
 }
 hook global BufWritePost .*\.go$ %{
     go-format -use-goimports
@@ -288,7 +294,7 @@ map global user o %{: grep HACK|TODO|FIXME|XXX|NOTE %val{bufname} -H<ret>} -docs
 map global user -docstring "Enable grep keymap mode for next key" g ": enter-user-mode<space>grep<ret>"
 declare-user-mode grep
 map global grep l %{: grep '' %val{bufname} -H<left><left><left><left><left><left><left><left><left><left><left><left><left><left><left><left><left><left>} -docstring "Local grep"
-map global grep g %{<A-i>w"gy<esc>: grep <C-r>g<ret>: try %{delete-buffer *grep*:<C-r>g}<ret> : try %{rename-buffer *grep*:<C-r>g}<ret> : try %{mark-pattern set <C-r>g}<ret>} -docstring "Grep for word under cursor, persist results"
+map global grep g %{<A-i>w"gy<esc>: grep <C-r>g<ret>: try %{delete-buffer *grep*:<C-r>g}<ret> : try %{rename-buffer *grep*:<C-r>g}<ret> : try %{mark-pattern set <C-r>g}<ret> : set-option global my_grep_buffer %val{bufname}<ret>} -docstring "Grep for word under cursor, persist results"
 map global grep / ': exec /<ret>\Q\E<left><left>' -docstring 'regex disabled'
 map global grep i %{:grep -i ''<left>} -docstring 'case insensitive'
 map global grep T %{:grep -i '' -g '*.ts'<left><left><left><left><left><left><left><left><left><left><left>} -docstring 'just typescript'
@@ -369,13 +375,12 @@ colorscheme nofrils-acme
 eval %sh{kak-lsp --kakoune --config ~/.config/kak-lsp/kak-lsp.toml -s $kak_session}
 map global lsp -docstring "Rename the item under cursor" R ": lsp-rename-prompt<ret>"
 
-
 declare-option -hidden str my_grep_buffer
 hook -group my global WinDisplay \
     \*(?:grep|find|make|references|diagnostics|implementations|symbols|cargo)\* %{
     set-option global my_grep_buffer %val{bufname}
 }
-define-command -override my-grep-next-match \
+define-command -override grep-next-match \
     -docstring 'Jump to the next match in a grep-like buffer' %{
     evaluate-commands -try-client %opt{jumpclient} %{
         buffer %opt{my_grep_buffer}
@@ -387,7 +392,7 @@ define-command -override my-grep-next-match \
         execute-keys gg %opt{grep_current_line}g
     }}
 }
-define-command -override my-grep-previous-match \
+define-command -override grep-previous-match \
     -docstring 'Jump to the previous match in a grep-like buffer' %{
     evaluate-commands -try-client %opt{jumpclient} %{
         buffer %opt{my_grep_buffer}
