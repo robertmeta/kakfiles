@@ -15,6 +15,8 @@ plug "occivink/kakoune-vertical-selection"
 plug "alexherbo2/prelude.kak"
 plug "alexherbo2/terminal-mode.kak"
 plug "alexherbo2/connect.kak"
+plug "occivink/kakoune-expand"
+plug "danr/kakoune-easymotion"
 plug "alexherbo2/objectify.kak"
 plug "alexherbo2/text-objects.kak"
 plug "andreyorst/smarttab.kak" %{
@@ -22,7 +24,7 @@ plug "andreyorst/smarttab.kak" %{
 }
 plug "fsub/kakoune-mark.git" domain "gitlab.com"
 plug "occivink/kakoune-find"
-# plug "JJK96/kakoune-emmet"
+plug "JJK96/kakoune-emmet"
 # plug "occivink/kakoune-snippets"
 # plug "andreyorst/fzf.kak"
 # TODO: learn how to custom config path here
