@@ -15,7 +15,9 @@ plug "occivink/kakoune-vertical-selection"
 plug "alexherbo2/prelude.kak"
 plug "alexherbo2/terminal-mode.kak"
 plug "alexherbo2/connect.kak"
-plug "occivink/kakoune-expand"
+plug "Delapouite/kakoune-expand-region" {
+    map global normal + :expand<ret>
+}
 plug "danr/kakoune-easymotion"
 plug "alexherbo2/objectify.kak"
 plug "alexherbo2/text-objects.kak"
