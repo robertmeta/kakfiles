@@ -14,15 +14,19 @@ plug "occivink/kakoune-sudo-write"
 plug "occivink/kakoune-vertical-selection"
 plug "alexherbo2/prelude.kak"
 plug "alexherbo2/terminal-mode.kak"
-plug "alexherbo2/connect.kak"
-plug "occivink/kakoune-expand" %{
-    map global normal + :expand<ret>
+plug "alexherbo2/connect.kak" %{
+    require-module connect
 }
 plug "danr/kakoune-easymotion"
 plug "alexherbo2/objectify.kak"
 plug "alexherbo2/text-objects.kak"
-plug "andreyorst/smarttab.kak" %{
+plug "andreyorst/smarttab.kak" defer smarttab %{
+    set-option global softtabstop 4
     expandtab
+} config %{
+    hook global WinSetOption filetype=(python|rust|markdown|kak|lisp|scheme|sh|perl) expandtab
+    hook global WinSetOption filetype=(makefile|gas|go) noexpandtab
+    hook global WinSetOption filetype=(c|cpp) smarttab
 }
 plug "fsub/kakoune-mark.git" domain "gitlab.com"
 plug "occivink/kakoune-find"
@@ -423,6 +427,8 @@ map global user '{' 'f{<a-i>}' -docstring "select inside next braces"
 map global user '<' 'f<lt><a-i><gt>' -docstring "select inside next angles"
 map global user '>' 'f<gt>lt<lt>' -docstring "select between next angles"
 map global user 'u' ': select-next-param<ret>' -docstring "select next argument"
+
+set-option global lsp_server_configuration pyls.configurationSources=["flake8"]
 
 try %{ source ~/.kakrc.local } # system local
 try %{ source .kakrc.local } # project local
