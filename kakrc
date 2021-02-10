@@ -96,7 +96,7 @@ add-highlighter global/ show-matching
 addhl global/ regex 'HACK|TODO|FIXME|XXX|NOTE' 0:+rb
 addhl global/ show-whitespaces -spc ' ' -lf ' ' -nbsp '·'
 
-hook global WinSetOption filetype=(rust|python|go|javascript|typescript|c|cpp) %{
+hook global WinSetOption filetype=(rust|python|go|javascript|typescript|c|cpp|nim) %{
     lsp-enable-window
     lsp-auto-hover-enable
     lsp-auto-hover-insert-mode-enable
@@ -142,6 +142,13 @@ hook global WinSetOption filetype=typescript %{
     hook buffer BufWritePre .* %{format}
 
     map window inserts c %{iconsole.log('X', JSON.stringify(X))<esc><a-/>X<ret><a-n>c} -docstring %{console.log}
+}
+hook global WinSetOption filetype=nim %{
+    set window indentwidth 2
+    map window user o %{: grep HACK|TODO|FIXME|XXX|NOTE|=>|^proc|^func|^method|^macro|^template|^import|^raise|^return|^case|^yield %val{bufname} -H<ret>} -docstring "Show outline"
+
+    set window formatcmd 'nimpretty'
+    hook buffer BufWritePre .* %{format}
 }
 hook global WinSetOption filetype=css %{
     set window indentwidth 2
@@ -432,3 +439,4 @@ set-option global lsp_server_configuration pyls.configurationSources=["flake8"]
 
 try %{ source ~/.kakrc.local } # system local
 try %{ source .kakrc.local } # project local
+
