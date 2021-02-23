@@ -11,15 +11,15 @@
 # plugins
 source "%val{config}/plugins/plug.kak/rc/plug.kak"
 plug "occivink/kakoune-sudo-write"
-plug "occivink/kakoune-vertical-selection"
+# plug "occivink/kakoune-vertical-selection"
 plug "alexherbo2/prelude.kak"
 plug "alexherbo2/terminal-mode.kak"
-plug "alexherbo2/connect.kak" %{
+plug "robertmeta/connect.kak" %{
     require-module connect
 }
-plug "danr/kakoune-easymotion"
-plug "alexherbo2/objectify.kak"
-plug "alexherbo2/text-objects.kak"
+#plug "danr/kakoune-easymotion"
+#plug "alexherbo2/objectify.kak"
+#plug "alexherbo2/text-objects.kak"
 plug "andreyorst/smarttab.kak" defer smarttab %{
     set-option global softtabstop 4
     expandtab
@@ -30,7 +30,7 @@ plug "andreyorst/smarttab.kak" defer smarttab %{
 }
 plug "fsub/kakoune-mark.git" domain "gitlab.com"
 plug "occivink/kakoune-find"
-plug "JJK96/kakoune-emmet"
+#plug "JJK96/kakoune-emmet"
 # plug "occivink/kakoune-snippets"
 # plug "andreyorst/fzf.kak"
 # TODO: learn how to custom config path here
@@ -143,6 +143,22 @@ hook global WinSetOption filetype=typescript %{
 
     map window inserts c %{iconsole.log('X', JSON.stringify(X))<esc><a-/>X<ret><a-n>c} -docstring %{console.log}
 }
+hook global WinSetOption filetype=typescript %{
+    set window indentwidth 2
+    map window user o %{: grep HACK|TODO|FIXME|XXX|NOTE|=>|^function|^export|^enum|^static|^require|^package|^const|^class|^interface|^type %val{bufname} -H<ret>} -docstring "Show outline"
+    set window lintcmd 'eslint'
+    set window formatcmd 'prettier --stdin --parser typescript'
+    hook buffer BufWritePre .* %{format}
+
+    map window inserts c %{iconsole.log('X', JSON.stringify(X))<esc><a-/>X<ret><a-n>c} -docstring %{console.log}
+}
+hook global WinSetOption filetype=python %{
+    set window indentwidth 4
+    set window formatcmd 'autopep8 -'
+    hook buffer BufWritePre .* %{format}
+
+    map window inserts c %{iconsole.log('X', JSON.stringify(X))<esc><a-/>X<ret><a-n>c} -docstring %{console.log}
+}
 hook global WinSetOption filetype=nim %{
     set window indentwidth 2
     map window user o %{: grep HACK|TODO|FIXME|XXX|NOTE|=>|^proc|^func|^method|^macro|^template|^import|^raise|^return|^case|^yield %val{bufname} -H<ret>} -docstring "Show outline"
@@ -213,6 +229,12 @@ define-command connect-vertical %{
 }
 define-command connect-horizontal %{
     alias global terminal tmux-terminal-horizontal
+}
+define-command fix-conflicts %{
+    grep <<<<<<<|=======|>>>>>>>
+    mark-add <<<<<<< 1
+    mark-add ======= 2
+    mark-add >>>>>>> 3
 }
 
 define-command github-url \
