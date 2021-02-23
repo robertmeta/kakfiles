@@ -232,9 +232,9 @@ define-command connect-horizontal %{
 }
 define-command fix-conflicts %{
     grep <<<<<<<|=======|>>>>>>>
-    mark-add <<<<<<< 1
-    mark-add ======= 2
-    mark-add >>>>>>> 3
+    mark-set <<<<<<< 1
+    mark-set ======= 2
+    mark-set >>>>>>> 3
 }
 
 define-command github-url \
