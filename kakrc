@@ -357,8 +357,8 @@ map global git -docstring "diff - Show changes between HEAD and working tree" d 
 map global git -docstring "git - Explore the repository history" g ": repl-new tig<ret>"
 map global git -docstring "github - Copy canonical GitHub URL to system clipboard" h ": github-url<ret>"
 map global git -docstring "log - Show commit logs for the current file" l ': repl-new "tig log -- %val{buffile}"<ret>'
-map global git -docstring "status - Show the working tree status" s ': repl-new "tig status"<ret>'
-map global git -docstring "status - Show the working tree status" G ': repl-new "tig status"<ret>,z'
+map global git -docstring "status - Show lazygit" s ': repl-new "lazygit"<ret>'
+map global git -docstring "status - Show lazygit" G ': repl-new "lazygit"<ret>,z'
 map global git -docstring "staged - Show staged changes" t ": git diff --staged<ret>"
 map global git -docstring "write - Write and stage the current file" w ": write<ret>: git add<ret>: git update-diff<ret>"
 
