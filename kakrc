@@ -10,6 +10,7 @@
 
 # plugins
 source "%val{config}/plugins/plug.kak/rc/plug.kak"
+plug "raiguard/one.kak"
 plug "occivink/kakoune-sudo-write"
 # plug "occivink/kakoune-vertical-selection"
 plug "alexherbo2/prelude.kak"
@@ -17,9 +18,6 @@ plug "alexherbo2/terminal-mode.kak"
 plug "robertmeta/connect.kak" %{
     require-module connect
 }
-#plug "danr/kakoune-easymotion"
-#plug "alexherbo2/objectify.kak"
-#plug "alexherbo2/text-objects.kak"
 plug "andreyorst/smarttab.kak" defer smarttab %{
     set-option global softtabstop 4
     expandtab
